@@ -12,10 +12,9 @@ export const site = {
   url: 'https://stagacquisitions.com',
   description:
     'Stag Acquisitions is a family-owned real estate investment group buying homes off-market for cash. No commission, no showings, no repairs — a straight number and a closing date you pick.',
-  // NOTE: placeholder mailbox. Point this at a real inbox before launch.
-  email: 'offers@stagacquisitions.com',
-  phone: '',
-  phoneDisplay: '',
+  // Sellers call or text this line; there is no public inbox.
+  phone: '+12164888920',
+  phoneDisplay: '(216) 488-8920',
 } as const;
 
 export const nav = [

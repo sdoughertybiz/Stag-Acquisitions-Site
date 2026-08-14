@@ -1,6 +1,8 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "dougherty-acq-site",
+  // Not a secret — it only identifies which account to deploy into.
+  "account_id": "5c2ec96b0583c6a851ef33f05e4286db",
   "main": "./dist/_worker.js/index.js",
   "compatibility_date": "2026-08-01",
   "compatibility_flags": ["nodejs_compat"],

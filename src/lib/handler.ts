@@ -3,7 +3,7 @@ import { sendLeadToFub } from './fub';
 import { isHoneypotTripped, validateLead, type RawLead } from './validate';
 
 export const CONTACT_FALLBACK =
-  "We couldn't submit that just now. Please email stephen@sellnowpros.com and we'll pick it up right away.";
+  "We couldn't submit that just now. Please call or text (216) 488-8920 and we'll pick it up right away.";
 
 const SUCCESS_MESSAGE =
   "Got it. We'll review the property and call you with a number — usually same day.";

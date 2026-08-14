@@ -90,11 +90,10 @@ describe.each(PAGES)('%s', (page) => {
     }
   });
 
-  it('uses the brand mailbox rather than a personal address', () => {
-    const mailtos = [...html.matchAll(/mailto:([^"']+)/g)].map((m) => m[1]);
-    for (const address of mailtos) {
-      expect(address, `${address} in ${page}`).toBe('offers@stagacquisitions.com');
-    }
+  it('publishes the phone line and no email address', () => {
+    // Sellers call or text; there is no public inbox to leak or bounce.
+    expect(html, `no mailto expected in ${page}`).not.toContain('mailto:');
+    expect(html).not.toMatch(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i);
   });
 });
 
@@ -227,7 +226,7 @@ describe('AI crawler surface', () => {
       'Scottsdale, Arizona',
       'Charlotte, North Carolina',
       'not a licensed real estate brokerage',
-      'offers@stagacquisitions.com',
+      '(216) 488-8920',
     ]) {
       expect(body, phrase).toContain(phrase);
     }
@@ -315,7 +314,7 @@ const SECTION_CONTENT: Record<string, Array<[string, string[]]>> = {
     ['criteria', ['What makes a property work for us.', 'Situation', 'Numbers', 'Title']],
     ['final-cta', ['Send the address anyway.']],
   ],
-  'offer.html': [['offer', ['What happens next', 'No commission.']]],
+  'offer.html': [['offer', ['What happens next', 'No commission.', '(216) 488-8920']]],
   'privacy.html': [],
 };
 
@@ -359,5 +358,72 @@ describe('index.html', () => {
     const schema = JSON.parse(match![1]!);
     expect(schema['@type']).toBe('RealEstateAgent');
     expect(schema.name).toBe('Stag Acquisitions');
+  });
+});
+
+describe('contact channel', () => {
+  it.each(PAGES)('%s links the phone line as a tel: URL', (page) => {
+    const html = read(page);
+    // The footer is on every page, so every page should carry the number.
+    expect(html, `no tel: link in ${page}`).toContain('href="tel:+12164888920"');
+    expect(text(page)).toContain('(216) 488-8920');
+  });
+
+  it('the endpoint failure message tells the seller to call', async () => {
+    const { CONTACT_FALLBACK } = await import('../src/lib/handler');
+    expect(CONTACT_FALLBACK).toContain('(216) 488-8920');
+    expect(CONTACT_FALLBACK).not.toContain('@');
+  });
+
+  it('organization schema publishes the phone, not an email', () => {
+    const schema = JSON.parse(
+      read('index.html').match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)![1]!,
+    );
+    expect(schema.telephone).toBe('+12164888920');
+    expect(schema.email).toBeUndefined();
+  });
+});
+
+describe('brand palette', () => {
+  const css = (): string => {
+    const dir = join(dist, '_astro');
+    const file = readdirSync(dir).find((f) => f.endsWith('.css'));
+    return readFileSync(join(dir, file!), 'utf8');
+  };
+
+  it('defines the reference palette tokens', () => {
+    const sheet = css();
+    for (const [token, value] of [
+      ['--sage', '#4A6650'],
+      ['--sage-mid', '#6B8F71'],
+      ['--sage-light', '#A8C5AC'],
+      ['--sage-pale', '#E8EDE9'],
+      ['--cream', '#FAF8F4'],
+      ['--stone', '#F0EDE7'],
+      ['--bark', '#2C2C27'],
+      ['--tan', '#C8BBA8'],
+    ]) {
+      expect(sheet.toUpperCase(), `${token}: ${value}`).toContain(value!.toUpperCase());
+    }
+  });
+
+  it('has no leftover navy or brass literals from the old theme', () => {
+    const sheet = css();
+    expect(sheet).not.toContain('6,16,28');
+    expect(sheet).not.toContain('195,154,82');
+    expect(sheet.toLowerCase()).not.toContain('#c39a52');
+    expect(sheet.toLowerCase()).not.toContain('#06101c');
+  });
+});
+
+describe('stag mark', () => {
+  it.each(PAGES)('%s renders the brand artwork, not a placeholder', (page) => {
+    const html = read(page);
+    expect(html).toContain('class="stag-mark');
+    expect(html).toContain('viewBox="0 0 1500 1500"');
+    // The reference artwork is a single long evenodd path.
+    const mark = html.match(/<svg class="stag-mark[\s\S]*?<\/svg>/)![0];
+    expect(mark).toContain('fill-rule="evenodd"');
+    expect(mark.length).toBeGreaterThan(5000);
   });
 });

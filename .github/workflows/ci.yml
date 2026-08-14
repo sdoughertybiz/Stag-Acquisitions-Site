@@ -1,0 +1,48 @@
+name: CI
+
+# Runs on every pull request and on direct pushes to main, so a PR shows a
+# green/red check before it is merged. Deployment is a separate workflow.
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Typecheck, build, and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run check
+
+      - name: Build
+        run: npm run build
+
+      # The suite includes tests that read dist/, so this must follow the build.
+      - name: Test
+        run: npm test
+
+      - name: Verify no secrets are in the build output
+        run: |
+          if grep -rIlE 'fka_[A-Za-z0-9]{8,}' dist/ ; then
+            echo "::error::A Follow Up Boss API key appears in the build output"
+            exit 1
+          fi
+          echo "No API keys found in dist/"

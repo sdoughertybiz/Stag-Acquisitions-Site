@@ -48,7 +48,7 @@ function handleRedirectStatus(): void {
     success.hidden = false;
   } else if (state === 'error') {
     showStatus(
-      "We couldn't submit that just now. Please email us and we'll pick it up right away.",
+      "We couldn't submit that just now. Please call or text (216) 488-8920.",
     );
   } else if (state === 'invalid') {
     showStatus('Please check the form and try again.');
@@ -96,7 +96,7 @@ if (form && success) {
       showStatus(body.message ?? 'Something went wrong. Please try again.');
     } catch {
       showStatus(
-        "We couldn't reach our system. Please email us directly and we'll pick it up right away.",
+        "We couldn't reach our system. Please call or text (216) 488-8920.",
       );
     } finally {
       if (button) button.disabled = false;
