@@ -427,3 +427,42 @@ describe('stag mark', () => {
     expect(mark.length).toBeGreaterThan(5000);
   });
 });
+
+describe('wordmark consistency', () => {
+  const css = (): string => {
+    const dir = join(dist, '_astro');
+    const file = readdirSync(dir).find((f) => f.endsWith('.css'));
+    return readFileSync(join(dir, file!), 'utf8');
+  };
+
+  it.each(PAGES)('%s uses the same lockup markup in the nav and the footer', (page) => {
+    const copy = text(page);
+    const marks = [...copy.matchAll(/<span class="wordmark[^"]*">.*?<\/span> <\/span>/g)].map(
+      (m) => m[0],
+    );
+    // One in the nav, one in the footer — both from the shared component.
+    expect(marks.length, `expected 2 wordmarks in ${page}`).toBe(2);
+    for (const mark of marks) {
+      expect(mark).toContain('wordmark-text');
+      expect(mark).toContain('<strong>STAG</strong>');
+      expect(mark).toContain('Acquisitions');
+      expect(mark).toContain('stag-mark');
+    }
+    // The nav lockup is the small variant, the footer the large one.
+    expect(marks[0]).toContain('wordmark-sm');
+    expect(marks[1]).toContain('wordmark-lg');
+  });
+
+  it('sets the wordmark type explicitly rather than inheriting it', () => {
+    // The nav and footer diverged because one inherited the display serif and
+    // the other did not. Both faces are now pinned to the body font.
+    const sheet = css().replace(/\s+/g, '');
+    expect(sheet).toContain('.wordmark-textstrong{font-family:var(--f-body)');
+    expect(sheet).toContain('.wordmark-textspan{font-family:var(--f-body)');
+  });
+
+  it('has no separate footer wordmark type treatment', () => {
+    const sheet = css();
+    expect(sheet).not.toContain('.footer-brand');
+  });
+});

@@ -1,6 +1,6 @@
 ---
 import { marketSummary, nav, site } from '../data/site';
-import StagMark from './StagMark.astro';
+import Wordmark from './Wordmark.astro';
 
 const year = 2026;
 ---
@@ -8,8 +8,7 @@ const year = 2026;
 <footer class="footer">
   <div class="footer-inner">
     <div>
-      <StagMark size={46} class="footer-mark" />
-      <div class="footer-brand"><strong>Stag</strong> Acquisitions</div>
+      <Wordmark markSize={46} size="lg" class="footer-wordmark" />
       <div class="footer-tag">{site.tagline}</div>
     </div>
 

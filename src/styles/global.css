@@ -170,38 +170,46 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
   padding: 1rem 3rem;
   border-bottom-color: var(--border-light);
 }
-.nav-brand {
-  font-family: var(--f-display);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  display: flex;
+ /* -------- Wordmark (shared by nav + footer) -------- */
+.wordmark {
+  display: inline-flex;
   align-items: center;
   gap: 0.85rem;
   line-height: 1;
+  /* Set explicitly, not inherited — the nav and footer previously picked up
+     different families by accident. */
+  font-family: var(--f-body);
+  text-transform: uppercase;
 }
-.nav-brand .stag-mark {
-  color: var(--brass);
+.wordmark .stag-mark {
   flex-shrink: 0;
   transition: transform var(--dur-med) var(--ease-lux);
 }
-.nav-brand:hover .stag-mark { transform: translateY(-2px); }
-.nav-brand-text { display: flex; flex-direction: column; gap: 0.28rem; }
-.nav-brand strong {
-  font-size: 1.5rem;
+.wordmark-text { display: flex; flex-direction: column; gap: 0.28rem; }
+.wordmark-text strong {
+  font-family: var(--f-body);
   font-weight: 600;
-  color: var(--cream);
   letter-spacing: 0.08em;
   line-height: 1;
 }
-.nav-brand span {
+.wordmark-text span {
   font-family: var(--f-body);
-  font-size: 0.62rem;
-  letter-spacing: 0.18em;
-  color: rgba(250, 248, 244, 0.72);
-  text-transform: uppercase;
   font-weight: 400;
+  letter-spacing: 0.18em;
   line-height: 1;
 }
+.wordmark-sm .stag-mark { width: 30px; height: 30px; }
+.wordmark-sm .wordmark-text strong { font-size: 1.5rem; }
+.wordmark-sm .wordmark-text span { font-size: 0.62rem; }
+.wordmark-lg .wordmark-text strong { font-size: clamp(1.6rem, 2.2vw, 2rem); }
+.wordmark-lg .wordmark-text span { font-size: 0.72rem; letter-spacing: 0.2em; }
+
+/* -------- Nav brand -------- */
+.nav-brand { display: flex; align-items: center; }
+.nav-brand .stag-mark { color: var(--brass); }
+.nav-brand:hover .stag-mark { transform: translateY(-2px); }
+.nav-brand .wordmark-text strong { color: var(--cream); }
+.nav-brand .wordmark-text span { color: rgba(250, 248, 244, 0.72); }
 
 .nav-links { display: flex; gap: 2.6rem; align-items: center; }
 .nav-links a {
@@ -227,8 +235,8 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
 
 /* Once the bar sits on cream instead of the hero photo, everything in it
    flips to the dark palette. */
-.nav.scrolled .nav-brand strong { color: var(--bark); }
-.nav.scrolled .nav-brand span { color: var(--body-text); }
+.nav.scrolled .nav-brand .wordmark-text strong { color: var(--bark); }
+.nav.scrolled .nav-brand .wordmark-text span { color: var(--body-text); }
 .nav.scrolled .nav-links a { color: var(--bark); }
 .nav.scrolled .nav-links a:hover,
 .nav.scrolled .nav-links a[aria-current="page"] { color: var(--sage); }
@@ -811,16 +819,10 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
   border-bottom: 1px solid var(--border-light);
 }
 @media (max-width: 820px) { .footer-inner { grid-template-columns: 1fr; gap: 2.4rem; } }
-.footer-mark { color: var(--sage); margin-bottom: 1.4rem; }
-.footer-brand {
-  font-family: var(--f-display);
-  font-size: clamp(1.5rem, 2.2vw, 2rem);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  line-height: 1.15;
-  margin-bottom: 0.8rem;
-}
-.footer-brand strong { font-weight: 600; color: var(--sage); }
+.footer-wordmark { margin-bottom: 1.1rem; }
+.footer-wordmark .stag-mark { color: var(--sage); }
+.footer-wordmark .wordmark-text strong { color: var(--bark); }
+.footer-wordmark .wordmark-text span { color: var(--sage); }
 .footer-tag { font-size: 0.76rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dust); }
 .footer-col h5 {
   font-size: 0.76rem;
@@ -857,8 +859,8 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
 @media (max-width: 820px) {
   .nav { padding: 1.2rem 1.5rem; }
   .nav.scrolled { padding: 0.9rem 1.5rem; }
-  .nav-brand strong { font-size: 1.25rem; }
-  .nav-brand span { display: none; }
+  .nav-brand .wordmark-text strong { font-size: 1.25rem; }
+  .nav-brand .wordmark-text span { display: none; }
   .nav-links {
     position: fixed;
     top: 0; right: 0; bottom: 0;
