@@ -92,6 +92,21 @@ const stats = [
 
   <section class="section ambient" id="why">
     <Backdrop src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=2000&q=80" variant="ambient" />
+    <div class="section-inner">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Why us, why off-market</span>
+        <h2>Three questions we get every week.</h2>
+      </div>
+
+      <div class="grid-3">
+        {questions.map((item, index) => (
+          <div class="callout" data-reveal data-reveal-delay={String(index + 1)}>
+            <h3>&ldquo;{item.q}&rdquo;</h3>
+            <p>{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </div>
   </section>
 
   <section class="section bright">

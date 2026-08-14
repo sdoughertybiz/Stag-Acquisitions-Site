@@ -120,6 +120,33 @@ const situations = [
 
   <section class="section ambient" id="process">
     <Backdrop src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2000&q=80" variant="ambient" />
+    <div class="section-inner">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">The process</span>
+        <h2>Four steps. Zero headaches.</h2>
+        <p class="lead">
+          Most sellers go from curious to under contract inside a week. It is not complicated — it
+          is just what happens when the buyer is the person making the decision.
+        </p>
+      </div>
+
+      <div class="grid-4">
+        {steps.map((step, index) => (
+          <div class="feature" data-reveal data-reveal-delay={String(index + 1)}>
+            <span class="feature-num">{step.num}</span>
+            <h3>{step.title}</h3>
+            <p>{step.body}</p>
+          </div>
+        ))}
+      </div>
+
+      <div class="center" style="margin-top: 5rem;" data-reveal>
+        <a class="cta-ghost" href="/how-it-works">
+          Full process breakdown
+          <span class="arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+    </div>
   </section>
 
   <section class="section bright" id="situations">
@@ -146,5 +173,19 @@ const situations = [
 
   <section class="section ambient" id="final-cta">
     <Backdrop src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2000&q=80" variant="ambient" />
+    <div class="section-inner center" style="max-width: 780px;">
+      <div data-reveal>
+        <span class="eyebrow">Ready</span>
+        <h2 style="margin: 1.5rem 0 2rem;">Let's see a number together.</h2>
+        <p class="lead" style="max-width: 56ch; margin: 0 auto 3rem;">
+          No obligation, no pitch, and no follow-up beyond what you ask for. Ninety seconds of your
+          time — and if the number works, we close.
+        </p>
+        <a class="cta" href="/offer">
+          Get a cash offer
+          <span class="arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+    </div>
   </section>
 </Base>

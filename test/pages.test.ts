@@ -164,6 +164,56 @@ describe('privacy.html', () => {
   });
 });
 
+/**
+ * Every section that should render body content, page by page.
+ *
+ * These exist because a bad search-and-replace once emptied all four
+ * `.section.ambient` blocks — the pages still built, still had nav, title, and
+ * canonical, and every other test passed. Asserting the actual copy is the only
+ * thing that catches a section quietly rendering as a bare backdrop.
+ */
+const SECTION_CONTENT: Record<string, Array<[string, string[]]>> = {
+  'index.html': [
+    ['who', ['A family business', 'No realtor fees', 'Any condition']],
+    ['process', ['Four steps. Zero headaches.', 'You reach out', 'We run comps', 'Pick your date', 'Full process breakdown']],
+    ['situations', ['Real situations. Real solutions.', 'Tired landlord', 'Pre-foreclosure']],
+    ['final-cta', ["Let's see a number together.", 'Get a cash offer']],
+  ],
+  'how-it-works.html': [
+    ['steps', ['How we actually buy your house.', 'Step 01', 'Step 04']],
+    ['why', ['Three questions we get every week.', 'Why off-market?', 'Why Stag?']],
+    ['final-cta', ['Tell us about the property.']],
+  ],
+  'markets.html': [
+    ['primary-markets', ['The markets we live in.', 'Middle Tennessee', 'the Carolinas', 'Texas triangle']],
+    ['criteria', ['What makes a property work for us.', 'Situation', 'Numbers', 'Title']],
+    ['final-cta', ['Send the address anyway.']],
+  ],
+  'offer.html': [['offer', ['What happens next', 'No commission.']]],
+  'privacy.html': [],
+};
+
+describe.each(Object.entries(SECTION_CONTENT))('%s section content', (page, sections) => {
+  const copy = text(page);
+
+  it.each(sections)('#%s renders its content', (id, phrases) => {
+    expect(copy, `#${id} is missing from ${page}`).toContain(`id="${id}"`);
+    for (const phrase of phrases) {
+      expect(copy, `"${phrase}" missing from #${id} in ${page}`).toContain(phrase);
+    }
+  });
+
+  it('has no section rendering as a bare backdrop', () => {
+    // Split on section boundaries rather than trying to match balanced tags —
+    // a loose regex here is exactly what let the original bug through.
+    const chunks = read(page).split('<section').slice(1);
+    const bare = chunks
+      .filter((chunk) => /^[^>]*class="section ambient"/.test(chunk))
+      .filter((chunk) => !chunk.slice(0, chunk.indexOf('</section>')).includes('section-inner'));
+    expect(bare, 'an ambient section has a backdrop but no content').toHaveLength(0);
+  });
+});
+
 describe('index.html', () => {
   const html = read('index.html');
 
