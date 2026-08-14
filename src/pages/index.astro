@@ -1,0 +1,150 @@
+---
+import Base from '../layouts/Base.astro';
+import Backdrop from '../components/Backdrop.astro';
+import { site } from '../data/site';
+
+const title = 'Stag Acquisitions — Family-Owned Cash Home Buyers';
+
+const values = [
+  {
+    title: 'No realtor fees',
+    body: 'Zero commission. The number we give you is the number you net. Nothing shaved off the top at closing.',
+  },
+  {
+    title: 'No showings',
+    body: 'No staging, no open houses, no buyer who walks in week three. One conversation with us and you are done.',
+  },
+  {
+    title: 'Close on your timeline',
+    body: 'Seven days if you need it. Ninety if you would rather take your time. You pick the date, not us.',
+  },
+  {
+    title: 'Any condition',
+    body: 'Deferred maintenance, code violations, tenants in place, a roof that has seen better decades. We buy it as it stands.',
+  },
+];
+
+const steps = [
+  {
+    num: '01',
+    title: 'You reach out',
+    body: 'Fill out the form or call us. Two minutes. Address, condition, timeline — that is all we need to start.',
+  },
+  {
+    num: '02',
+    title: 'We run comps',
+    body: 'Usually the same day. By the time we talk numbers we have already pulled the comparables for your street, your square footage, and your condition.',
+  },
+  {
+    num: '03',
+    title: 'A straight number',
+    body: 'A short call with one of the owners. You get a cash offer — not a range, not a teaser, not a number that changes later.',
+  },
+  {
+    num: '04',
+    title: 'Pick your date',
+    body: 'Title company of your choice or ours. Cash wires the day of closing. If the number does not work for you, no hard feelings and no follow-up.',
+  },
+];
+
+const situations = [
+  {
+    title: 'Tired landlord',
+    body: 'Maintenance calls at 2am, a tenant you would rather not fight, rental income that stopped feeling worth it. Sell quietly, tenant in place.',
+  },
+  {
+    title: 'Inherited property',
+    body: 'Probate has cleared and the house is three states away. Nobody in the family wants to manage the repairs. Sell it exactly as it sits.',
+  },
+  {
+    title: 'Pre-foreclosure',
+    body: 'The bank is moving and the clock is real. We close fast and clean so you protect your credit and walk away with something.',
+  },
+  {
+    title: 'Major repairs',
+    body: 'Foundation, roof, water damage, open permits. Everything an agent told you to fix before listing. Skip it — we will take the property as-is.',
+  },
+  {
+    title: 'Divorce or life change',
+    body: 'You need this handled quickly and privately, without a sign in the yard or six months of showings. A cash close is built for exactly this.',
+  },
+  {
+    title: 'Just ready to move on',
+    body: 'No crisis, no drama. A house that no longer fits, and a seller who would rather have cash next week than a maybe in six months.',
+  },
+];
+---
+
+<Base title={title}>
+  <header class="hero">
+    <Backdrop src="https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=2400&q=80" variant="hero" priority />
+    <div class="hero-content">
+      <span class="eyebrow">Family-owned since day one</span>
+      <h1>Sell your home <em>off&#8209;market.</em></h1>
+      <p class="hero-tagline">Fast &middot; Simple &middot; Hassle-free</p>
+      <div class="hero-cta">
+        <a class="cta" href="/offer">
+          Get your offer now
+          <span class="arrow" aria-hidden="true">&rarr;</span>
+        </a>
+        <a class="cta-ghost" href="/how-it-works">See how it works</a>
+      </div>
+    </div>
+
+    <div class="scroll-indicator" aria-hidden="true">Scroll</div>
+  </header>
+
+  <section class="section" id="who">
+    <div class="section-inner">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Who we are</span>
+        <h2>A family business.<br />Not agents. Not a marketplace.</h2>
+        <p class="lead">
+          Stag Acquisitions is run by {site.principals[0]} and {site.principals[1]} — two
+          brothers who buy houses with their own capital. There is no call center here, no lead
+          broker reselling your address, and no junior rep reading a script. You talk to an owner,
+          you get a real number, and you close when you say so.
+        </p>
+      </div>
+
+      <div class="grid-4">
+        {values.map((value, index) => (
+          <div class="feature-compact" data-reveal data-reveal-delay={String(index + 1)}>
+            <h4>{value.title}</h4>
+            <p>{value.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section ambient" id="process">
+    <Backdrop src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2000&q=80" variant="ambient" />
+  </section>
+
+  <section class="section bright" id="situations">
+    <div class="section-inner">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">What we buy</span>
+        <h2>Real situations. Real solutions.</h2>
+        <p class="lead">
+          We do not need to know why you are selling. We need to know whether the number works and
+          the paperwork is clean. Here is what comes through every week.
+        </p>
+      </div>
+
+      <div class="grid-3">
+        {situations.map((item, index) => (
+          <div class="feature" data-reveal data-reveal-delay={String((index % 3) + 1)}>
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section ambient" id="final-cta">
+    <Backdrop src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2000&q=80" variant="ambient" />
+  </section>
+</Base>

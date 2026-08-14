@@ -1,0 +1,94 @@
+---
+import Base from '../layouts/Base.astro';
+import Backdrop from '../components/Backdrop.astro';
+import { markets } from '../data/site';
+
+const title = 'Markets — Where Stag Acquisitions Buys';
+const description =
+  'We buy homes in Nashville, Charlotte and the Carolinas, Atlanta, Florida, Texas, and across the Southeast. Off-market, cash, any condition.';
+
+const criteria = [
+  {
+    letter: 'A',
+    title: 'Situation',
+    body: 'A seller motivated by time, condition, or a life event. Probate, relocation, a tired rental, a repair bill nobody wants to write. Speed and certainty have to be worth something to you.',
+  },
+  {
+    letter: 'B',
+    title: 'Numbers',
+    body: 'A price that leaves room for the work the property needs. We are not chasing trophy deals — we are looking for houses where our capital and our contractors add real value.',
+  },
+  {
+    letter: 'C',
+    title: 'Title',
+    body: 'Clean or cleanable. Liens, back taxes, and probate complications are all workable — we have closed through all of them. We just need to know about them up front.',
+  },
+];
+---
+
+<Base title={title} description={description}>
+  <header class="hero hero-short">
+    <Backdrop src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=2400&q=80" variant="hero" priority />
+    <div class="hero-content">
+      <span class="eyebrow">Where we buy</span>
+      <h1><em>Nashville</em> to the coast.</h1>
+      <p class="lead">
+        We buy across Tennessee, the Carolinas, Georgia, Florida, and Texas — with the deepest
+        knowledge in the markets we work every day. If your address falls outside them, send it
+        anyway and we will tell you straight.
+      </p>
+      <div class="hero-cta">
+        <a class="cta" href="/offer">
+          Submit your address
+          <span class="arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <section class="section" id="primary-markets">
+    <div class="section-inner">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Primary markets</span>
+        <h2>The markets we live in.</h2>
+        <p class="lead">
+          These are the regions where we know the comp set block by block — and where we can put a
+          number in front of you the same day you call.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        {markets.map((market, index) => (
+          <div class="market-card" data-reveal data-reveal-delay={String((index % 4) + 1)}>
+            <div>
+              <span class="market-label">{market.label}</span>
+              <h3>{market.name}</h3>
+            </div>
+            <p>{market.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section ambient" id="criteria">
+    <Backdrop src="https://images.unsplash.com/photo-1449844908441-8829872d2607?auto=format&fit=crop&w=2000&q=80" variant="ambient" />
+  </section>
+
+  <section class="section" id="final-cta">
+    <div class="section-inner center" style="max-width: 720px;">
+      <div data-reveal>
+        <span class="eyebrow">Not sure you're in range?</span>
+        <h2 style="margin: 1.5rem 0 2rem;">Send the address anyway.</h2>
+        <p class="lead" style="max-width: 54ch; margin: 0 auto 3rem;">
+          Worst case we tell you it is not a fit and point you somewhere useful. That costs you two
+          minutes and nothing else.
+        </p>
+        <a class="cta" href="/offer">
+          Get a cash offer
+          <span class="arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</Base>

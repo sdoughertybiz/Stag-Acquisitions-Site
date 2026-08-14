@@ -1,0 +1,135 @@
+---
+import Base from '../layouts/Base.astro';
+import Backdrop from '../components/Backdrop.astro';
+
+const title = 'How It Works — Stag Acquisitions';
+const description =
+  'Four steps from first contact to cash at closing: you reach out, we run comps, you get a straight number, and you pick the closing date.';
+
+const steps = [
+  {
+    num: 'Step 01',
+    title: 'You reach out.',
+    body: 'Call us or drop your details in the form on the offer page. We need four things: the address, the rough condition, your timeline, and a phone number that reaches you. Nothing else, and nothing that ends up sold to a list broker.',
+  },
+  {
+    num: 'Step 02',
+    title: 'We run comps. <em>Quickly.</em>',
+    body: 'This is where most investors stall. They want a walkthrough, a contractor visit, and two weeks before they will say a number out loud. We pull the comparables for your street, your square footage, and your condition — usually the same day you call — so the first number you hear is the real one.',
+  },
+  {
+    num: 'Step 03',
+    title: 'A straight number, on the phone.',
+    body: 'A short call with one of the owners. No presentation, no pressure, no "let me check with my partner and get back to you." You get a single cash figure and the reasoning behind it. If it does not work for you, say so and we will leave you alone.',
+  },
+  {
+    num: 'Step 04',
+    title: 'You pick the closing date.',
+    body: 'If we agree on the number, we send a simple purchase agreement. Read it, have your attorney read it, take the time you need. Title company of your choice or ours. Cash wires the day of closing — seven days out or ninety, whichever suits you.',
+  },
+];
+
+const questions = [
+  {
+    q: 'Why off-market?',
+    a: 'Listing burns months. You pay six percent to an agent, fix the things the inspector flags, keep the house showable, and then hope the buyer’s financing holds. Off-market skips all of it. One buyer, one number, one closing date.',
+  },
+  {
+    q: 'Why cash?',
+    a: 'Because cash actually closes. No appraiser holding up the deal, no lender pulling out at the last minute, no financing contingency that lets a buyer walk in week three. When we say we will close on the fourteenth, we close on the fourteenth.',
+  },
+  {
+    q: 'Why Stag?',
+    a: 'Because you will talk to an owner, not a call center. We are a family business buying with our own money, which means the person who gives you a number is the person who signs the check. That is the whole difference.',
+  },
+];
+
+const stats = [
+  { num: '0%', label: 'Realtor commission' },
+  { num: '0', label: 'Showings required' },
+  { num: '7&ndash;90', label: 'Days to close — your call' },
+  { num: 'As&nbsp;is', label: 'Condition we accept' },
+];
+---
+
+<Base title={title} description={description}>
+  <header class="hero hero-short">
+    <Backdrop src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2400&q=80" variant="hero" priority />
+    <div class="hero-content">
+      <span class="eyebrow">The process</span>
+      <h1>Four steps. <em>Zero</em> headaches.</h1>
+      <p class="lead">
+        Most sellers go from curious to under contract inside a week. It is not magic — it is just
+        what happens when nobody has to ask permission.
+      </p>
+      <div class="hero-cta">
+        <a class="cta" href="/offer">
+          Start the process
+          <span class="arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <section class="section" id="steps">
+    <div class="section-inner" style="max-width: 980px;">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Step by step</span>
+        <h2>How we actually buy your house.</h2>
+      </div>
+
+      <div class="steps">
+        {steps.map((step) => (
+          <div class="step" data-reveal>
+            <span class="step-num">{step.num}</span>
+            <h3 set:html={step.title} />
+            <p>{step.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section ambient" id="why">
+    <Backdrop src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=2000&q=80" variant="ambient" />
+  </section>
+
+  <section class="section bright">
+    <div class="section-inner">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">What's in it for you</span>
+        <h2>The math is simple.</h2>
+        <p class="lead">
+          A typical retail sale costs six to ten percent in commission, closing costs, and repair
+          credits — before you count the months of carrying the property. Our number has none of
+          that built into it.
+        </p>
+      </div>
+
+      <div class="stat-ribbon" data-reveal>
+        {stats.map((stat) => (
+          <div class="stat">
+            <div class="stat-num" set:html={stat.num} />
+            <div class="stat-label">{stat.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="final-cta">
+    <div class="section-inner center" style="max-width: 720px;">
+      <div data-reveal>
+        <span class="eyebrow">Next step</span>
+        <h2 style="margin: 1.5rem 0 2rem;">Tell us about the property.</h2>
+        <p class="lead" style="max-width: 54ch; margin: 0 auto 3rem;">
+          Ninety seconds of your time and a real number back, usually the same day.
+        </p>
+        <a class="cta" href="/offer">
+          Get a cash offer
+          <span class="arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</Base>

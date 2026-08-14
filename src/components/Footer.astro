@@ -1,0 +1,39 @@
+---
+import { marketSummary, nav, site } from '../data/site';
+import StagMark from './StagMark.astro';
+
+const year = 2026;
+---
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <StagMark size={46} class="footer-mark" />
+      <div class="footer-brand"><strong>Stag</strong> Acquisitions</div>
+      <div class="footer-tag">{site.tagline}</div>
+    </div>
+
+    <div class="footer-col">
+      <h5>Site</h5>
+      {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+    </div>
+
+    <div class="footer-col">
+      <h5>Contact</h5>
+      <a href={`mailto:${site.email}`}>{site.email}</a>
+      {marketSummary.map((line) => <p>{line}</p>)}
+    </div>
+
+    <div class="footer-col">
+      <h5>Legal</h5>
+      <a href="/privacy">Privacy Policy</a>
+      <a href="/privacy#sms-messaging">SMS Terms</a>
+      <p>Reply STOP to opt out of SMS.</p>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <span>&copy; {year} {site.legalEntity} &middot; United States</span>
+    <span>Private investors &middot; Not a licensed real estate brokerage</span>
+  </div>
+</footer>

@@ -1,0 +1,25 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# secrets — never commit
+.env
+.env.*
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+
+# cloudflare
+.wrangler/
+
+# logs / os
+*.log
+npm-debug.log*
+.DS_Store
+
+# editors
+.vscode/
+.idea/

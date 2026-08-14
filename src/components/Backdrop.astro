@@ -1,0 +1,29 @@
+---
+/**
+ * Cinematic photographic backdrop with a slow Ken Burns drift.
+ *
+ * Stills rather than video: the freely-hosted stock video available to us is
+ * all coastal/resort footage, which is wrong for this brand — and four 1080p
+ * autoplaying loops is a bad trade on mobile data. `variant` sets how heavy
+ * the scrim is: heroes keep the image legible, ambient sections sit behind
+ * body copy and need the darker treatment.
+ */
+interface Props {
+  src: string;
+  variant?: 'hero' | 'ambient';
+  /** Above-the-fold images load eagerly; everything else waits. */
+  priority?: boolean;
+}
+
+const { src, variant = 'hero', priority = false } = Astro.props;
+---
+
+<div class={variant === 'hero' ? 'hero-media' : 'ambient-media'} aria-hidden="true">
+  <img
+    src={src}
+    alt=""
+    loading={priority ? 'eager' : 'lazy'}
+    fetchpriority={priority ? 'high' : 'auto'}
+    decoding="async"
+  />
+</div>

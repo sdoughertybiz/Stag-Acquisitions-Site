@@ -1,0 +1,28 @@
+{
+  "name": "dougherty-acq-site",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Dougherty Acquisitions — marketing site with Follow Up Boss lead capture, deployed on Cloudflare Workers.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "wrangler dev",
+    "deploy": "astro build && wrangler deploy",
+    "check": "astro check",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "smoke:fub": "node scripts/smoke-fub.mjs"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^12.6.10",
+    "astro": "^5.16.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.2.4",
+    "wrangler": "^4.42.0"
+  }
+}

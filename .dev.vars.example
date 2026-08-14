@@ -1,0 +1,17 @@
+# Copy to .dev.vars for local development (git-ignored).
+# .dev.vars is loaded by wrangler and by `astro dev` via the Cloudflare platform proxy.
+
+# Follow Up Boss API key (Admin > API in FUB). Used as the HTTP Basic username.
+FUB_API_KEY=fka_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# Optional: registered system identification headers.
+# Register at https://apps.followupboss.com/system-registration
+# If FUB_SYSTEM_KEY is unset, the X-System headers are omitted and the API
+# still accepts the request via Basic auth alone.
+FUB_SYSTEM_KEY=
+
+# Optional overrides (defaults live in wrangler.jsonc `vars`)
+FUB_SOURCE=StagAcquisitions.com
+FUB_SYSTEM=StagAcqSite
+FUB_ASSIGNED_TO=Stephen Dougherty
+FUB_ASSIGNED_USER_ID=1

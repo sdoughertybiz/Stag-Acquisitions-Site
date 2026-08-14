@@ -1,0 +1,22 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "dougherty-acq-site",
+  "main": "./dist/_worker.js/index.js",
+  "compatibility_date": "2026-08-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS"
+  },
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    // Non-secret config. Secrets (FUB_API_KEY, FUB_SYSTEM_KEY) are set with:
+    //   npx wrangler secret put FUB_API_KEY
+    "FUB_SOURCE": "StagAcquisitions.com",
+    "FUB_SYSTEM": "StagAcqSite",
+    "FUB_ASSIGNED_TO": "Stephen Dougherty",
+    "FUB_ASSIGNED_USER_ID": "1"
+  }
+}

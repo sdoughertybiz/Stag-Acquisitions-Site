@@ -1,0 +1,137 @@
+---
+import Base from '../layouts/Base.astro';
+import { LEGAL_UPDATED, site } from '../data/site';
+
+const title = 'Privacy Policy — Stag Acquisitions';
+const description = `How ${site.name} collects, uses, and protects the information you submit, including SMS messaging terms.`;
+---
+
+<Base title={title} description={description}>
+  <section class="section" style="padding-top: 12rem;">
+    <div class="section-inner">
+      <div class="section-head" data-reveal style="margin-bottom: 3rem;">
+        <span class="eyebrow">Legal</span>
+        <h2>Privacy Policy</h2>
+      </div>
+
+      <div class="legal" data-reveal>
+        <p class="legal-meta">Last updated <strong>{LEGAL_UPDATED}</strong></p>
+
+        <p>
+          {site.name} ("we", "us", "our") operates this website. This policy explains what
+          information we collect from you, why we collect it, and what we do with it. If anything
+          here is unclear, email <a href={`mailto:${site.email}`}>{site.email}</a> and we will
+          answer directly.
+        </p>
+
+        <h2>Information we collect</h2>
+        <p>We only collect what you give us. When you submit the offer form, that is:</p>
+        <ul>
+          <li>Your name</li>
+          <li>Your phone number</li>
+          <li>Your email address, if you choose to provide one</li>
+          <li>The address of the property you are asking about</li>
+          <li>The condition and timeline you select, and any notes you write</li>
+          <li>Whether you consented to SMS contact</li>
+          <li>The page you submitted from</li>
+        </ul>
+        <p>
+          We do not run advertising trackers, sell profiles, or build behavioral records of your
+          visit.
+        </p>
+
+        <h2>How we use it</h2>
+        <p>
+          We use your information for exactly one purpose: to evaluate the property and contact you
+          about a potential purchase. That means researching comparable sales, preparing an offer,
+          and reaching out by phone, email, or — if you consented — text message.
+        </p>
+        <p>
+          Your submission is stored in our customer relationship management system (Follow Up Boss)
+          so the person handling your property has your details in one place.
+        </p>
+
+        <h2>Who we share it with</h2>
+        <p>
+          We do not sell your information, and we do not share it with lead brokers or marketing
+          lists. We share it only with:
+        </p>
+        <ul>
+          <li>Service providers who operate our systems on our behalf, such as our CRM and hosting providers</li>
+          <li>
+            Title companies, attorneys, and closing agents, but only if you and we move forward with
+            a transaction
+          </li>
+          <li>Anyone we are legally required to share it with</li>
+        </ul>
+
+        <h2 id="sms-messaging">SMS messaging terms</h2>
+        <h3>Consent</h3>
+        <p>
+          By checking the SMS consent box on our offer form, you agree to receive text messages from
+          {' '}{site.name} about your property, your cash offer, scheduling, and closing. Consent is
+          <strong> not</strong> a condition of receiving an offer or of any purchase — you can leave
+          the box unchecked and we will contact you by phone and email instead.
+        </p>
+        <h3>Message frequency and cost</h3>
+        <p>
+          Message frequency varies based on your conversation with us. Message and data rates may
+          apply. We do not charge for the messages themselves; your carrier may.
+        </p>
+        <h3>Opting out</h3>
+        <p>
+          Reply <strong>STOP</strong> to any message to opt out of SMS at any time. You will receive
+          one confirmation message and then no further texts. Reply <strong>HELP</strong> for help,
+          or email <a href={`mailto:${site.email}`}>{site.email}</a>.
+        </p>
+        <h3>Sharing</h3>
+        <p>
+          Mobile information and SMS consent will not be shared with or sold to third parties or
+          affiliates for marketing purposes.
+        </p>
+
+        <h2>Retention</h2>
+        <p>
+          We keep submissions for as long as we may reasonably need them for the transaction and our
+          records. You can ask us to delete your information at any time by emailing
+          {' '}<a href={`mailto:${site.email}`}>{site.email}</a>, and we will do so unless we are
+          required to keep it for a completed transaction.
+        </p>
+
+        <h2>Your choices</h2>
+        <p>
+          You can ask us what information we hold about you, ask us to correct it, ask us to delete
+          it, or tell us to stop contacting you entirely. Email
+          {' '}<a href={`mailto:${site.email}`}>{site.email}</a> and we will act on the request.
+        </p>
+
+        <h2>Cookies</h2>
+        <p>
+          This site does not set advertising or analytics cookies. Fonts are loaded from Google
+          Fonts and hero media is served from third-party media hosts, which means those providers
+          receive your IP address as part of serving the file.
+        </p>
+
+        <h2>Not a brokerage</h2>
+        <p>
+          {site.name} is a private real estate investment group. We are not a licensed real estate
+          brokerage and we do not represent you in a transaction. Nothing on this site is legal, tax,
+          or financial advice, and no offer is binding until both parties sign a written purchase
+          agreement.
+        </p>
+
+        <h2>Changes</h2>
+        <p>
+          If we update this policy we will change the date at the top. Material changes will be
+          described here rather than made quietly.
+        </p>
+
+        <h2>Contact</h2>
+        <p>
+          Questions about this policy or your information:
+          {' '}<a href={`mailto:${site.email}`}>{site.email}</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+</Base>

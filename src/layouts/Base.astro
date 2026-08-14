@@ -1,0 +1,83 @@
+---
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../data/site';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Rendered into <head> for page-specific structured data. */
+  noindex?: boolean;
+}
+
+const { title, description = site.description, noindex = false } = Astro.props;
+
+// `build.format: 'file'` emits /offer.html, but the URL people visit is /offer.
+// Strip the extension so canonical and og:url match the real address.
+const cleanPath = Astro.url.pathname.replace(/index\.html$/, '').replace(/\.html$/, '');
+const canonical = new URL(cleanPath || '/', site.url).href;
+
+const favicon =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%2306101c'/%3E%3Ctext x='50' y='68' font-family='Georgia,serif' font-size='58' fill='%23c39a52' text-anchor='middle' font-weight='600'%3ES%3C/text%3E%3C/svg%3E";
+
+const orgSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'RealEstateAgent',
+  name: site.name,
+  description: site.description,
+  url: site.url,
+  email: site.email,
+  areaServed: ['Nashville TN', 'Charlotte NC', 'Atlanta GA', 'Florida', 'Texas'],
+  knowsAbout: ['Off-market home purchase', 'Cash home buying', 'As-is property acquisition'],
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#06101c" />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <title>{title}</title>
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Jost:wght@300;400;500;600&display=swap"
+    />
+    <link rel="icon" href={favicon} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(orgSchema)} is:inline />
+
+    <!-- Without JS there is no observer to reveal anything, so show it all. -->
+    <noscript>
+      <style>
+        [data-reveal] { opacity: 1 !important; transform: none !important; }
+      </style>
+    </noscript>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Nav />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <script src="../scripts/main.ts"></script>
+  </body>
+</html>
