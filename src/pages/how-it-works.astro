@@ -10,39 +10,51 @@ const steps = [
   {
     num: 'Step 01',
     title: 'You reach out.',
-    body: 'Call us or drop your details in the form on the offer page. We need four things: the address, the rough condition, your timeline, and a phone number that reaches you. Nothing else, and nothing that ends up sold to a list broker.',
+    body: 'Call us or fill out the form. We need four things: the address, the rough condition, your timeline, and a number that reaches you. Nothing else, and nothing that gets sold to a list broker.',
   },
   {
     num: 'Step 02',
     title: 'We run comps. <em>Quickly.</em>',
-    body: 'This is where most investors stall. They want a walkthrough, a contractor visit, and two weeks before they will say a number out loud. We pull the comparables for your street, your square footage, and your condition — usually the same day you call — so the first number you hear is the real one.',
+    body: 'This is where most investors stall — a walkthrough, a contractor visit, two weeks before anyone says a number out loud. We pull the comparables for your street, square footage, and condition the same day.',
   },
   {
     num: 'Step 03',
     title: 'A straight number, on the phone.',
-    body: 'A short call with one of the owners. No presentation, no pressure, no "let me check with my partner and get back to you." You get a single cash figure and the reasoning behind it. If it does not work for you, say so and we will leave you alone.',
+    body: 'A short call with an owner. No presentation, no pressure, no checking with a partner. One cash figure and the reasoning behind it. If it does not work, say so.',
   },
   {
     num: 'Step 04',
     title: 'You pick the closing date.',
-    body: 'If we agree on the number, we send a simple purchase agreement. Read it, have your attorney read it, take the time you need. Title company of your choice or ours. Cash wires the day of closing — seven days out or ninety, whichever suits you.',
+    body: 'A simple purchase agreement. Have your attorney read it. Title company of your choice or ours. Cash wires the day of closing — seven days out or ninety.',
   },
 ];
 
 const questions = [
   {
     q: 'Why off-market?',
-    a: 'Listing burns months. You pay six percent to an agent, fix the things the inspector flags, keep the house showable, and then hope the buyer’s financing holds. Off-market skips all of it. One buyer, one number, one closing date.',
+    a: 'Listing burns months. Six percent to an agent, repairs the inspector flags, a house kept showable, and a buyer whose financing might hold. Off-market skips all of it.',
   },
   {
     q: 'Why cash?',
-    a: 'Because cash actually closes. No appraiser holding up the deal, no lender pulling out at the last minute, no financing contingency that lets a buyer walk in week three. When we say we will close on the fourteenth, we close on the fourteenth.',
+    a: 'Cash closes. No appraiser holding up the deal, no lender pulling out in week three. When we say the fourteenth, we close on the fourteenth.',
   },
   {
     q: 'Why Stag?',
-    a: 'Because you will talk to an owner, not a call center. We are a family business buying with our own money, which means the person who gives you a number is the person who signs the check. That is the whole difference.',
+    a: 'You talk to an owner, not a call center. We buy with our own money, so the person who gives you a number is the person who signs the check.',
   },
 ];
+
+// Marked up as an FAQPage so assistants and search engines can lift these
+// answers directly rather than having to infer them from prose.
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: questions.map((item) => ({
+    '@type': 'Question',
+    name: item.q,
+    acceptedAnswer: { '@type': 'Answer', text: item.a },
+  })),
+};
 
 const stats = [
   { num: '0%', label: 'Realtor commission' },
@@ -53,14 +65,19 @@ const stats = [
 ---
 
 <Base title={title} description={description}>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} is:inline />
+
   <header class="hero hero-short">
-    <Backdrop src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2400&q=80" variant="hero" priority />
+    <Backdrop
+      src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2400&q=80"
+      variant="hero"
+      priority
+    />
     <div class="hero-content">
       <span class="eyebrow">The process</span>
       <h1>Four steps. <em>Zero</em> headaches.</h1>
       <p class="lead">
-        Most sellers go from curious to under contract inside a week. It is not magic — it is just
-        what happens when nobody has to ask permission.
+        Most sellers go from curious to under contract inside a week.
       </p>
       <div class="hero-cta">
         <a class="cta" href="/offer">
@@ -91,10 +108,13 @@ const stats = [
   </section>
 
   <section class="section ambient" id="why">
-    <Backdrop src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=2000&q=80" variant="ambient" />
+    <Backdrop
+      src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=2000&q=80"
+      variant="ambient"
+    />
     <div class="section-inner">
       <div class="section-head" data-reveal>
-        <span class="eyebrow">Why us, why off-market</span>
+        <span class="eyebrow">Why off-market</span>
         <h2>Three questions we get every week.</h2>
       </div>
 
@@ -112,12 +132,11 @@ const stats = [
   <section class="section bright">
     <div class="section-inner">
       <div class="section-head" data-reveal>
-        <span class="eyebrow">What's in it for you</span>
-        <h2>The math is simple.</h2>
+        <span class="eyebrow">The math</span>
+        <h2>Simple, when you run it.</h2>
         <p class="lead">
-          A typical retail sale costs six to ten percent in commission, closing costs, and repair
-          credits — before you count the months of carrying the property. Our number has none of
-          that built into it.
+          A retail sale costs six to ten percent in commission, closing costs, and repair credits —
+          before you count the months of carrying the place.
         </p>
       </div>
 
@@ -137,8 +156,8 @@ const stats = [
       <div data-reveal>
         <span class="eyebrow">Next step</span>
         <h2 style="margin: 1.5rem 0 2rem;">Tell us about the property.</h2>
-        <p class="lead" style="max-width: 54ch; margin: 0 auto 3rem;">
-          Ninety seconds of your time and a real number back, usually the same day.
+        <p class="lead" style="max-width: 50ch; margin: 0 auto 3rem;">
+          Ninety seconds, and a real number back the same day.
         </p>
         <a class="cta" href="/offer">
           Get a cash offer

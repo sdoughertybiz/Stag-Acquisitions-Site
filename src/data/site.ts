@@ -11,12 +11,11 @@ export const site = {
   legalEntity: 'Stag Acquisitions',
   url: 'https://stagacquisitions.com',
   description:
-    'Stag Acquisitions is a family-owned real estate investment group buying homes off-market for cash. No agent commissions, no showings, no repairs — a straight number and a closing date you choose.',
-  email: 'stephen@sellnowpros.com',
+    'Stag Acquisitions is a family-owned real estate investment group buying homes off-market for cash. No commission, no showings, no repairs — a straight number and a closing date you pick.',
+  // NOTE: placeholder mailbox. Point this at a real inbox before launch.
+  email: 'offers@stagacquisitions.com',
   phone: '',
   phoneDisplay: '',
-  principals: ['Stephen Dougherty', 'Phillip Dougherty'],
-  foundedNote: 'A family business — two brothers, one phone number, no call center.',
 } as const;
 
 export const nav = [
@@ -29,41 +28,39 @@ export const nav = [
 /** Regions listed on /markets and summarized in the footer. */
 export const markets = [
   {
-    label: 'Region 01',
-    name: 'Nashville & Middle Tennessee',
-    body: 'Davidson and Williamson counties through Green Hills, Belle Meade, Forest Hills, Brentwood, and Franklin, plus East Nashville and the Sylvan Park corridor. Our deepest comp set — we know these blocks lot by lot.',
+    label: 'Market 01',
+    name: 'Nashville, Tennessee',
+    body: 'Davidson and Williamson counties — Green Hills, Belle Meade, Forest Hills, Brentwood, Franklin, East Nashville, Sylvan Park. We know these blocks lot by lot.',
   },
   {
-    label: 'Region 02',
-    name: 'Charlotte & the Carolinas',
-    body: 'Charlotte proper through Myers Park, Dilworth, Eastover, and SouthPark, out through Mecklenburg County and the surrounding Piedmont into Raleigh and the Triangle.',
+    label: 'Market 02',
+    name: 'Scottsdale, Arizona',
+    body: 'Old Town, North Scottsdale, Paradise Valley, and the greater Phoenix valley. Fast-moving inventory and a rehab market we work every week.',
   },
   {
-    label: 'Region 03',
-    name: 'Atlanta & North Georgia',
-    body: 'Atlanta inside the perimeter through Buckhead, Brookhaven, and Decatur, plus the OTP counties of Cobb, Gwinnett, DeKalb, and Fulton.',
+    label: 'Market 03',
+    name: 'Charlotte, North Carolina',
+    body: 'Myers Park, Dilworth, Eastover, SouthPark, and the rest of Mecklenburg County out through the surrounding Piedmont.',
   },
   {
-    label: 'Region 04',
-    name: 'Florida — major metros',
-    body: 'Tampa, Orlando, Jacksonville, and the southeast corridor from West Palm Beach through Boca Raton and Fort Lauderdale into Miami-Dade.',
-  },
-  {
-    label: 'Region 05',
-    name: 'Texas triangle',
-    body: 'Dallas-Fort Worth, Houston proper and the surrounding counties, and the Austin metro through Travis and Williamson.',
-  },
-  {
-    label: 'Region 06',
-    name: 'The Southeast, broadly',
-    body: "Birmingham, Greenville, Knoxville, Chattanooga, Savannah. If the address is outside our named markets, send it anyway — we'll tell you straight if it isn't a fit.",
+    label: 'Everywhere else',
+    name: 'Across the United States',
+    body: "We buy outside our home markets too. If the address is somewhere else, send it anyway — we will tell you straight whether it is a fit.",
   },
 ] as const;
 
 /** Short list used in the footer contact column. */
 export const marketSummary = [
-  'Nashville · Charlotte · Atlanta',
-  'Florida · Texas · The Southeast',
+  'Nashville · Scottsdale · Charlotte',
+  'And across the United States',
+] as const;
+
+/** Structured-data service areas. */
+export const areaServed = [
+  'Nashville, TN',
+  'Scottsdale, AZ',
+  'Charlotte, NC',
+  'United States',
 ] as const;
 
 /** Condition options on the offer form. Values are sent to Follow Up Boss verbatim. */

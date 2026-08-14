@@ -23,6 +23,20 @@ describe('build output', () => {
     const worker = readdirSync(join(dist, '_worker.js'));
     expect(worker).toContain('index.js');
   });
+
+  it('emits a sitemap on the same origin as the canonical URLs', () => {
+    // astro.config's `site` and site.ts's `url` are set independently; a
+    // mismatch silently publishes a sitemap for the wrong domain.
+    const index = readFileSync(join(dist, 'sitemap-index.xml'), 'utf8');
+    const urls = readFileSync(join(dist, 'sitemap-0.xml'), 'utf8');
+    expect(index).toContain('https://stagacquisitions.com/');
+    expect(urls).toContain('https://stagacquisitions.com/');
+    expect(urls).not.toContain('doughertyacquisitions');
+
+    const robots = readFileSync(join(dist, 'robots.txt'), 'utf8');
+    const declared = robots.match(/Sitemap:\s*(\S+)/)?.[1];
+    expect(declared).toBe('https://stagacquisitions.com/sitemap-index.xml');
+  });
 });
 
 describe.each(PAGES)('%s', (page) => {
@@ -66,6 +80,21 @@ describe.each(PAGES)('%s', (page) => {
   it('has scroll-reveal targets with a no-JS fallback', () => {
     expect(html).toContain('data-reveal');
     expect(html).toContain('<noscript>');
+  });
+
+  // The brand speaks for itself; individuals are never named in public copy.
+  // Lead assignment still routes to a named user, but that lives in the Worker.
+  it('names no individual person', () => {
+    for (const name of ['Stephen', 'Phillip', 'Dougherty', 'brothers']) {
+      expect(html, `"${name}" appears in ${page}`).not.toContain(name);
+    }
+  });
+
+  it('uses the brand mailbox rather than a personal address', () => {
+    const mailtos = [...html.matchAll(/mailto:([^"']+)/g)].map((m) => m[1]);
+    for (const address of mailtos) {
+      expect(address, `${address} in ${page}`).toBe('offers@stagacquisitions.com');
+    }
   });
 });
 
@@ -150,6 +179,103 @@ describe('offer.html — the lead form', () => {
   });
 });
 
+describe('AI crawler surface', () => {
+  const robots = () => readFileSync(join(dist, 'robots.txt'), 'utf8');
+  const llms = () => readFileSync(join(dist, 'llms.txt'), 'utf8');
+
+  const AI_AGENTS = [
+    'GPTBot',
+    'OAI-SearchBot',
+    'ChatGPT-User',
+    'ClaudeBot',
+    'Claude-User',
+    'Claude-SearchBot',
+    'Google-Extended',
+    'PerplexityBot',
+    'Applebot-Extended',
+    'CCBot',
+  ];
+
+  it.each(AI_AGENTS)('robots.txt explicitly allows %s', (agent) => {
+    const block = robots().split(/User-agent:/).find((b) => b.trim().startsWith(agent));
+    expect(block, `no group for ${agent}`).toBeDefined();
+    expect(block).toContain('Allow: /');
+  });
+
+  it('keeps the lead endpoint out of every crawler group', () => {
+    const groups = robots().split(/User-agent:/).slice(1);
+    expect(groups.length).toBeGreaterThan(5);
+    for (const group of groups) {
+      // Named groups override the wildcard, so each must exclude /api/ itself.
+      expect(group, group.split('\n')[0]).toContain('Disallow: /api/');
+    }
+  });
+
+  it('points crawlers at the sitemap', () => {
+    expect(robots()).toContain('Sitemap: https://stagacquisitions.com/sitemap-index.xml');
+  });
+
+  it('publishes an llms.txt that leads with the brand and a summary', () => {
+    expect(llms()).toMatch(/^# Stag Acquisitions/);
+    expect(llms()).toMatch(/\n> /);
+  });
+
+  it('llms.txt states the markets and the non-brokerage disclaimer', () => {
+    const body = llms();
+    for (const phrase of [
+      'Nashville, Tennessee',
+      'Scottsdale, Arizona',
+      'Charlotte, North Carolina',
+      'not a licensed real estate brokerage',
+      'offers@stagacquisitions.com',
+    ]) {
+      expect(body, phrase).toContain(phrase);
+    }
+  });
+
+  it('llms.txt links only to canonical absolute URLs', () => {
+    const links = [...llms().matchAll(/\]\((https?:\/\/[^)]+)\)/g)].map((m) => m[1]);
+    expect(links.length).toBeGreaterThan(3);
+    for (const link of links) {
+      expect(link, link).toMatch(/^https:\/\/stagacquisitions\.com/);
+    }
+  });
+
+  it('how-it-works carries FAQ structured data', () => {
+    const blocks = [...read('how-it-works.html').matchAll(
+      /<script type="application\/ld\+json">([\s\S]*?)<\/script>/g,
+    )].map((m) => JSON.parse(m[1]!));
+    const faq = blocks.find((b) => b['@type'] === 'FAQPage');
+    expect(faq, 'no FAQPage schema').toBeDefined();
+    expect(faq.mainEntity).toHaveLength(3);
+    for (const entry of faq.mainEntity) {
+      expect(entry['@type']).toBe('Question');
+      expect(entry.acceptedAnswer.text.length).toBeGreaterThan(30);
+    }
+  });
+});
+
+describe('markets.html', () => {
+  const copy = text('markets.html');
+
+  it('lists exactly the three home markets plus nationwide coverage', () => {
+    for (const market of [
+      'Nashville, Tennessee',
+      'Scottsdale, Arizona',
+      'Charlotte, North Carolina',
+      'Across the United States',
+    ]) {
+      expect(copy, market).toContain(market);
+    }
+  });
+
+  it('no longer advertises the markets we dropped', () => {
+    for (const stale of ['Atlanta', 'Texas triangle', 'Boston', 'Seattle', 'Washington DC']) {
+      expect(copy, `stale market "${stale}"`).not.toContain(stale);
+    }
+  });
+});
+
 describe('privacy.html', () => {
   const html = read('privacy.html');
 
@@ -174,7 +300,7 @@ describe('privacy.html', () => {
  */
 const SECTION_CONTENT: Record<string, Array<[string, string[]]>> = {
   'index.html': [
-    ['who', ['A family business', 'No realtor fees', 'Any condition']],
+    ['who', ['Private buyers.', 'No realtor fees', 'Any condition']],
     ['process', ['Four steps. Zero headaches.', 'You reach out', 'We run comps', 'Pick your date', 'Full process breakdown']],
     ['situations', ['Real situations. Real solutions.', 'Tired landlord', 'Pre-foreclosure']],
     ['final-cta', ["Let's see a number together.", 'Get a cash offer']],
@@ -185,7 +311,7 @@ const SECTION_CONTENT: Record<string, Array<[string, string[]]>> = {
     ['final-cta', ['Tell us about the property.']],
   ],
   'markets.html': [
-    ['primary-markets', ['The markets we live in.', 'Middle Tennessee', 'the Carolinas', 'Texas triangle']],
+    ['primary-markets', ['The markets we live in.', 'Nashville, Tennessee', 'Scottsdale, Arizona', 'Charlotte, North Carolina', 'Across the United States']],
     ['criteria', ['What makes a property work for us.', 'Situation', 'Numbers', 'Title']],
     ['final-cta', ['Send the address anyway.']],
   ],
@@ -223,9 +349,8 @@ describe('index.html', () => {
     expect(html).toContain('/how-it-works');
   });
 
-  it('describes the family-owned positioning', () => {
-    expect(html).toContain('family business');
-    expect(html).toContain('Stephen Dougherty');
+  it('describes the family-owned positioning without naming anyone', () => {
+    expect(html).toContain('family-owned');
   });
 
   it('includes organization structured data', () => {

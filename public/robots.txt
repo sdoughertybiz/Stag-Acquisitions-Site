@@ -1,5 +1,92 @@
+# Stag Acquisitions — https://stagacquisitions.com
+# Default: everything is crawlable except the lead endpoint.
+
 User-agent: *
 Allow: /
 Disallow: /api/
 
-Sitemap: https://stagacquisitions.com/sitemap.xml
+# ---------------------------------------------------------------
+# AI crawlers — explicitly welcomed.
+#
+# We want this site quoted in AI answers about selling a home
+# off-market, so every assistant crawler is allowed by name. Named
+# groups override the wildcard above, so each one repeats the
+# /api/ exclusion.
+#
+# OpenAI (three distinct agents, three distinct purposes):
+#   GPTBot        — model training
+#   OAI-SearchBot — builds the ChatGPT search index
+#   ChatGPT-User  — fetches a page when a user asks about it
+# ---------------------------------------------------------------
+
+User-agent: GPTBot
+Allow: /
+Disallow: /api/
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /api/
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /api/
+
+# Anthropic:
+#   ClaudeBot       — crawling / training
+#   Claude-User     — user-initiated fetches inside Claude
+#   Claude-SearchBot — search indexing
+User-agent: ClaudeBot
+Allow: /
+Disallow: /api/
+
+User-agent: Claude-User
+Allow: /
+Disallow: /api/
+
+User-agent: Claude-SearchBot
+Allow: /
+Disallow: /api/
+
+User-agent: anthropic-ai
+Allow: /
+Disallow: /api/
+
+# Google Gemini / AI Overviews grounding
+User-agent: Google-Extended
+Allow: /
+Disallow: /api/
+
+# Perplexity
+User-agent: PerplexityBot
+Allow: /
+Disallow: /api/
+
+User-agent: Perplexity-User
+Allow: /
+Disallow: /api/
+
+# Microsoft Copilot
+User-agent: BingBot
+Allow: /
+Disallow: /api/
+
+# Apple Intelligence
+User-agent: Applebot
+Allow: /
+Disallow: /api/
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /api/
+
+# Meta AI
+User-agent: meta-externalagent
+Allow: /
+Disallow: /api/
+
+# Common Crawl (feeds many downstream models)
+User-agent: CCBot
+Allow: /
+Disallow: /api/
+
+Sitemap: https://stagacquisitions.com/sitemap-index.xml

@@ -1,26 +1,25 @@
 ---
 import Base from '../layouts/Base.astro';
 import Backdrop from '../components/Backdrop.astro';
-import { site } from '../data/site';
 
 const title = 'Stag Acquisitions — Family-Owned Cash Home Buyers';
 
 const values = [
   {
     title: 'No realtor fees',
-    body: 'Zero commission. The number we give you is the number you net. Nothing shaved off the top at closing.',
+    body: 'Zero commission. The number we give is the number you net.',
   },
   {
     title: 'No showings',
-    body: 'No staging, no open houses, no buyer who walks in week three. One conversation with us and you are done.',
+    body: 'No staging, no open houses, no buyer who walks in week three.',
   },
   {
     title: 'Close on your timeline',
-    body: 'Seven days if you need it. Ninety if you would rather take your time. You pick the date, not us.',
+    body: "Seven days if you need it. Ninety if you don't. Your call.",
   },
   {
     title: 'Any condition',
-    body: 'Deferred maintenance, code violations, tenants in place, a roof that has seen better decades. We buy it as it stands.',
+    body: "Code violations, tenants in place, deferred everything. We've bought it all.",
   },
 ];
 
@@ -28,58 +27,63 @@ const steps = [
   {
     num: '01',
     title: 'You reach out',
-    body: 'Fill out the form or call us. Two minutes. Address, condition, timeline — that is all we need to start.',
+    body: 'Address, condition, timeline. Two minutes.',
   },
   {
     num: '02',
     title: 'We run comps',
-    body: 'Usually the same day. By the time we talk numbers we have already pulled the comparables for your street, your square footage, and your condition.',
+    body: 'Same day, usually. The first number you hear is the real one.',
   },
   {
     num: '03',
-    title: 'A straight number',
-    body: 'A short call with one of the owners. You get a cash offer — not a range, not a teaser, not a number that changes later.',
+    title: 'Straight number',
+    body: 'A short call with an owner. Not a range. A number.',
   },
   {
     num: '04',
     title: 'Pick your date',
-    body: 'Title company of your choice or ours. Cash wires the day of closing. If the number does not work for you, no hard feelings and no follow-up.',
+    body: 'Seven days or ninety. Cash wires the day of closing.',
   },
 ];
 
 const situations = [
   {
     title: 'Tired landlord',
-    body: 'Maintenance calls at 2am, a tenant you would rather not fight, rental income that stopped feeling worth it. Sell quietly, tenant in place.',
+    body: 'Maintenance calls at 2am and rent that stopped feeling worth it. Sell quietly, tenant in place.',
   },
   {
     title: 'Inherited property',
-    body: 'Probate has cleared and the house is three states away. Nobody in the family wants to manage the repairs. Sell it exactly as it sits.',
+    body: 'Probate cleared, the house is three states away, and nobody wants the repairs. Sell it as-is.',
   },
   {
     title: 'Pre-foreclosure',
-    body: 'The bank is moving and the clock is real. We close fast and clean so you protect your credit and walk away with something.',
+    body: 'The bank is moving. We close fast and clean so you walk away with something.',
   },
   {
     title: 'Major repairs',
-    body: 'Foundation, roof, water damage, open permits. Everything an agent told you to fix before listing. Skip it — we will take the property as-is.',
+    body: "Roof, foundation, water damage, open permits. Skip the fixes — we'll take it.",
   },
   {
     title: 'Divorce or life change',
-    body: 'You need this handled quickly and privately, without a sign in the yard or six months of showings. A cash close is built for exactly this.',
+    body: 'Quick and quiet, without a sign in the yard. A cash close is built for this.',
   },
   {
     title: 'Just ready to move on',
-    body: 'No crisis, no drama. A house that no longer fits, and a seller who would rather have cash next week than a maybe in six months.',
+    body: 'A house that no longer fits. Cash next week beats a maybe in six months.',
   },
 ];
 ---
 
 <Base title={title}>
   <header class="hero">
-    <Backdrop src="https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=2400&q=80" variant="hero" priority />
+    <Backdrop
+      src="https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=2400&q=80"
+      variant="hero"
+      priority
+    />
+
     <div class="hero-content">
-      <span class="eyebrow">Family-owned since day one</span>
+      <span class="eyebrow">Family-owned</span>
       <h1>Sell your home <em>off&#8209;market.</em></h1>
       <p class="hero-tagline">Fast &middot; Simple &middot; Hassle-free</p>
       <div class="hero-cta">
@@ -98,12 +102,11 @@ const situations = [
     <div class="section-inner">
       <div class="section-head" data-reveal>
         <span class="eyebrow">Who we are</span>
-        <h2>A family business.<br />Not agents. Not a marketplace.</h2>
+        <h2>Private buyers.<br />Not agents. Not a marketplace.</h2>
         <p class="lead">
-          Stag Acquisitions is run by {site.principals[0]} and {site.principals[1]} — two
-          brothers who buy houses with their own capital. There is no call center here, no lead
-          broker reselling your address, and no junior rep reading a script. You talk to an owner,
-          you get a real number, and you close when you say so.
+          Stag Acquisitions is a family-owned investment group buying with its own capital in
+          Nashville, Scottsdale, Charlotte, and across the country. No call center, no lead broker
+          reselling your address. You talk to an owner and you get a real number.
         </p>
       </div>
 
@@ -119,14 +122,16 @@ const situations = [
   </section>
 
   <section class="section ambient" id="process">
-    <Backdrop src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2000&q=80" variant="ambient" />
+    <Backdrop
+      src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2000&q=80"
+      variant="ambient"
+    />
     <div class="section-inner">
       <div class="section-head" data-reveal>
         <span class="eyebrow">The process</span>
         <h2>Four steps. Zero headaches.</h2>
         <p class="lead">
-          Most sellers go from curious to under contract inside a week. It is not complicated — it
-          is just what happens when the buyer is the person making the decision.
+          Most sellers go from curious to under contract inside a week.
         </p>
       </div>
 
@@ -155,8 +160,7 @@ const situations = [
         <span class="eyebrow">What we buy</span>
         <h2>Real situations. Real solutions.</h2>
         <p class="lead">
-          We do not need to know why you are selling. We need to know whether the number works and
-          the paperwork is clean. Here is what comes through every week.
+          We do not need to know why you are selling. Here is what comes through every week.
         </p>
       </div>
 
@@ -172,14 +176,17 @@ const situations = [
   </section>
 
   <section class="section ambient" id="final-cta">
-    <Backdrop src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2000&q=80" variant="ambient" />
+    <Backdrop
+      src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2000&q=80"
+      variant="ambient"
+    />
     <div class="section-inner center" style="max-width: 780px;">
       <div data-reveal>
         <span class="eyebrow">Ready</span>
         <h2 style="margin: 1.5rem 0 2rem;">Let's see a number together.</h2>
-        <p class="lead" style="max-width: 56ch; margin: 0 auto 3rem;">
-          No obligation, no pitch, and no follow-up beyond what you ask for. Ninety seconds of your
-          time — and if the number works, we close.
+        <p class="lead" style="max-width: 52ch; margin: 0 auto 3rem;">
+          No obligation and no pitch. Ninety seconds of your time — and if the number works, we
+          close.
         </p>
         <a class="cta" href="/offer">
           Get a cash offer
