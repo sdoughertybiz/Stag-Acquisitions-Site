@@ -4,7 +4,12 @@ Astro 5 marketing site for **Stag Acquisitions**, a family-owned real estate
 investment group. Static pages plus one server route that pushes seller
 inquiries into Follow Up Boss as leads assigned to **Stephen Dougherty**.
 
-Deployed to Cloudflare Workers with static assets.
+Deployed to Cloudflare Workers with static assets. **Pushing to `main` deploys
+automatically** — see [Deploying](#deploying).
+
+> **Working on this repo?** Read
+> [Working on this codebase](#working-on-this-codebase) first. Several things
+> here look like bugs and are not.
 
 > The directory, repo, and Worker are still named `dougherty-acq-site` from
 > before the rebrand. That is deliberate — only the brand changed.
@@ -56,8 +61,8 @@ npx wrangler dev --port 8787      # http://localhost:8787
 ## Editing content
 
 Almost everything a non-developer would change lives in **`src/data/site.ts`**:
-brand name, contact email, nav, market regions, and the condition/timeline
-dropdown options. Page copy lives in the frontmatter arrays at the top of each
+brand name, phone number, nav, market regions, service areas, and the
+condition/timeline dropdown options. Page copy lives in the frontmatter arrays at the top of each
 `.astro` page.
 
 ## Follow Up Boss integration
@@ -125,14 +130,20 @@ npx wrangler secret put FUB_API_KEY
 
 ## Tests
 
-132 tests across five files, no network access required:
+198 tests across five files, no network access required:
 
 - `test/parse.test.ts` — name splitting, phone normalization, address parsing
 - `test/validate.test.ts` — required fields, honeypot, truncation, consent
 - `test/fub.test.ts` — payload shape, auth headers, every FUB response code
 - `test/handler.test.ts` — the endpoint end to end with a fake `fetch`
 - `test/pages.test.ts` — rendered HTML: form fields, labels, SMS disclosures,
-  canonical URLs, and assertions that no secret ever appears in the output
+  canonical URLs, per-section content, the AI crawler surface, the brand
+  palette, the wordmark lockup, and assertions that no secret, email address,
+  or personal name ever appears in the output
+
+`test/pages.test.ts` reads from `dist/`. A global setup builds it if missing,
+but it will happily assert against a **stale** build — run `rm -rf dist` before
+`npm test` if results look impossible.
 
 `npm run smoke:fub` is the only test that touches the real CRM. It submits one
 clearly-marked lead through a running local server, verifies the fields and the
@@ -140,27 +151,163 @@ assignment landed, then deletes the person. Pass `KEEP_LEAD=1` to skip cleanup.
 
 ## Design notes
 
-- Fraunces (display) + Jost (body/UI), dark navy `#06101c` with brass `#c39a52`.
-- Backdrops are architectural stills with a slow Ken Burns drift rather than
-  video — the freely-hosted stock video available was all coastal/resort
+- **Type:** Playfair Display (headings) + Manrope (everything else). Both are
+  set on `--f-display` / `--f-body` in `src/styles/global.css`; swapping the
+  pair means changing those two variables and the Google Fonts `<link>` in
+  `src/layouts/Base.astro`.
+- **Palette:** cream `#FAF8F4`, sage `#4A6650`, bark `#2C2C27`, taken from the
+  brand's reference artwork. See the token warning below before renaming any of
+  it.
+- **Backdrops** are architectural stills with a slow Ken Burns drift rather
+  than video — the freely-hosted stock video available was all coastal/resort
   footage, and four autoplaying 1080p loops is a poor trade on mobile.
-- Scroll reveals use `IntersectionObserver`; anything above the fold reveals
-  immediately, and a `<noscript>` block shows everything when JS is off.
-- The stag mark is a self-contained SVG in `src/components/StagMark.astro`.
-  To swap in a supplied asset, drop it in `public/` and replace that component's
-  body with an `<img>` — it is used in the nav and footer only.
+- **Contrast rhythm:** the page is light, but heroes and `.section.ambient`
+  bands stay dark over photography with cream type. That is deliberate; cream
+  body text directly on a photo is unreadable.
+- **Scroll reveals** use `IntersectionObserver`; anything above the fold
+  reveals immediately, and a `<noscript>` block shows everything when JS is
+  off. `prefers-reduced-motion` disables the drift and the reveals outright.
+- **The stag mark** (`src/components/StagMark.astro`) is the brand's own
+  artwork — a single `evenodd` path on a `0 0 1500 1500` viewBox, inheriting
+  `currentColor`. It is rendered only through `Wordmark.astro`.
 
 ## Deploying
 
-```bash
-npx wrangler login
-npx wrangler secret put FUB_API_KEY
-npm run deploy
-```
+Deployment is automated. **Merging to `main` (or pushing to it) builds, tests,
+and deploys**, then smoke-checks the live URLs.
+
+- `.github/workflows/ci.yml` — runs on every PR and on `main`: typecheck →
+  build → test → a grep that fails if a FUB key appears in `dist/`.
+- `.github/workflows/deploy.yml` — runs the same checks on `main`, deploys, and
+  verifies every route returns 200.
+
+The only repo secret is **`CLOUDFLARE_API_TOKEN`** (Settings → Secrets and
+variables → Actions), created from the "Edit Cloudflare Workers" token template.
+The account id is not secret and lives in `wrangler.jsonc`.
+
+**Prefer pushing over deploying by hand.** `npm run deploy` works and is fine
+for a hotfix, but run from a feature branch it ships unreviewed code straight to
+production and leaves `main` no longer matching what is live.
+
+To attach a custom domain, add a `routes` entry to `wrangler.jsonc` and update
+`site` in `astro.config.mjs` **and** `url` in `src/data/site.ts` together — see
+the warning below about those two staying in sync.
 
 To attach a custom domain, add a `routes` entry to `wrangler.jsonc` and update
 `site` in `astro.config.mjs` plus `url` in `src/data/site.ts` so canonical URLs,
 `og:url`, and `robots.txt` all match.
+
+---
+
+## Working on this codebase
+
+Written for whoever picks this up next, human or AI. Several things below look
+like mistakes and are deliberate; the rest are traps that have already caused a
+real bug at least once.
+
+### Things that look like bugs but are not
+
+**1. The wordmark uses the body font, not the display serif.**
+`STAG / ACQUISITIONS` in the nav and footer renders in Manrope while every
+heading is Playfair Display. This is a deliberate, signed-off choice. It began
+as an accident — wrapping the nav text in a `<span>` caught a
+`font-family: var(--f-body)` rule — but the client preferred it, so it is now
+set explicitly in `.wordmark-text`. Do not "harmonize" it with the headings.
+Both placements render from one `Wordmark.astro`, so they cannot drift again.
+
+**2. The color tokens are named for a theme that no longer exists.**
+This site was built dark navy and brass, then rebranded to cream and sage. To
+avoid touching ~200 rules, the old role names were kept as aliases:
+
+```css
+--brass: var(--sage);   /* brass is GREEN  */
+--void:  var(--cream);  /* void is CREAM   */
+--mist:  var(--bark);   /* mist is NEAR-BLACK */
+--ink:   #F4F1EA;       /* ink is a LIGHT surface */
+```
+
+The names lie. Renaming them requires updating every usage in the same commit;
+a partial rename silently produces an unreadable page. If you do rename them,
+`test/pages.test.ts` asserts the brand hex values are present in the built CSS,
+which will catch a botched job.
+
+**3. Condition and timeline are `required` in the markup but not on the server.**
+Deliberate. A partially filled lead is still a lead worth having. Only first
+name, phone, and property address are enforced in `validateLead`.
+
+**4. Address parsing is lenient and never fails.**
+`parseAddress` works backwards from the ZIP and drops anything it cannot place
+into `street`, always preserving the raw input. Do not make it strict — a
+rejected submission is a lost customer, and Follow Up Boss receives the full
+raw address regardless.
+
+**5. `.scroll-indicator` centers with `left/right: 0` and `margin-inline: auto`,
+not `left: 50%; transform: translateX(-50%)`.**
+As an absolutely-positioned child of a flex container, the percentage resolved
+against the wrong box and sat visibly off-center on narrow screens. The verbose
+version is the correct one.
+
+**6. One personal name remains, on purpose.**
+`FUB_ASSIGNED_TO` in `src/lib/env.ts` routes leads to a named CRM user. Public
+copy names nobody, and a test asserts that "Stephen", "Phillip", "Dougherty",
+and "brothers" appear on zero rendered pages. These two facts are not in
+conflict — do not "fix" either one to match the other.
+
+### Traps that have already caused a bug here
+
+**Never bulk-edit `.astro` templates with a regex.**
+This is the single most damaging thing done to this repo so far. A pattern
+intended to swap a `<div>` matched greedily across closing tags and deleted the
+entire body of all four `.section.ambient` blocks — the process grid, both
+final CTAs, the FAQ callouts, and the markets fit-test. Everything still built.
+Every test still passed. The only symptom was blank bands in a screenshot.
+
+Edit templates file by file with exact-match edits. `test/pages.test.ts` now
+asserts per-section content and that no ambient section renders as a bare
+backdrop, but those tests only cover the sections that exist today.
+
+**The site URL is defined in two places and they must agree.**
+`site` in `astro.config.mjs` feeds the sitemap; `url` in `src/data/site.ts`
+feeds canonical tags and `og:url`. They were out of sync once and the sitemap
+was published for the wrong domain. A test now compares them — keep it.
+
+**`public/.assetsignore` is load-bearing.**
+It stops `_worker.js` being uploaded as a public static asset. Without it
+`wrangler deploy` refuses to run, and the failure mode it prevents is serving
+your server bundle to the internet. Do not delete it.
+
+### Architecture facts you cannot infer from the file tree
+
+- **Only `/api/lead` runs on the server.** Every page is prerendered. A new
+  server route needs `export const prerender = false`, or it is built to static
+  HTML and silently stops working.
+- **`build.format: 'file'`** emits `dist/offer.html`, which Cloudflare serves at
+  `/offer`. `Base.astro` strips the `.html` when building canonical URLs. If you
+  switch to directory format, update that logic and the test expectations.
+- **Env vars reach the Worker through `locals.runtime.env`**, not
+  `process.env` or `import.meta.env`. `src/lib/handler.ts` is deliberately
+  framework-free so it can be tested with a plain `Request` and a fake `fetch`.
+- **`.dev.vars` holds a real Follow Up Boss API key.** It is git-ignored. Never
+  commit it, never echo it, never paste it into a log or a commit message.
+- **`npm run smoke:fub` writes to the client's live CRM.** It creates a
+  clearly-marked test person and deletes it afterwards, but it is not a casual
+  command. Everything in `npm test` is offline and safe.
+- **Node 22** in CI. `npm ci` there, so `package-lock.json` must stay committed
+  and in sync.
+
+### Before you open a PR
+
+```bash
+rm -rf dist && npm test && npm run check
+```
+
+Then look at the page. Several defects in this project's history — a wrong-brand
+sitemap, four gutted sections, an off-center element, unreadable type over a
+photo — passed every automated check and were only visible on screen. Rendering
+the page in a browser at both a desktop and a mobile width is part of the work,
+not an optional extra.
+
+---
 
 ## Known advisories
 
