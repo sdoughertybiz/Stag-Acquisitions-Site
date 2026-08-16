@@ -7,10 +7,11 @@ import {
   buildTags,
   FUB_EVENTS_URL,
   FUB_EVENT_TYPE,
+  FUB_INVESTOR_EVENT_TYPE,
   sendLeadToFub,
   type FubConfig,
 } from '../src/lib/fub';
-import type { CleanLead } from '../src/lib/validate';
+import type { CleanInvestorLead, CleanSellerLead } from '../src/lib/validate';
 
 const config: FubConfig = {
   apiKey: 'fka_test_key',
@@ -20,7 +21,8 @@ const config: FubConfig = {
   assignedUserId: 1,
 };
 
-const lead: CleanLead = {
+const lead: CleanSellerLead = {
+  type: 'seller',
   firstName: 'Dana',
   lastName: 'Whitfield',
   phone: '615-555-1234',
@@ -31,6 +33,25 @@ const lead: CleanLead = {
   notes: 'Tenant in place through March.',
   smsConsent: true,
   pageUrl: 'https://stagacquisitions.com/offer',
+  market: '',
+};
+
+const investorLead: CleanInvestorLead = {
+  type: 'investor',
+  firstName: 'Marcus',
+  lastName: 'Feld',
+  phone: '480-555-9090',
+  email: 'marcus@example.com',
+  organization: 'Feld Development',
+  assetTypes: 'Teardown / redevelopment, Land / lots',
+  targetMarkets: 'Scottsdale, Paradise Valley',
+  priceRange: '$1M – $3M',
+  scope: 'Teardown and rebuild',
+  volume: '6–12 deals a year',
+  financing: 'Hard money / bridge',
+  notes: 'Prefers corner lots over 12,000 sq ft.',
+  smsConsent: false,
+  pageUrl: 'https://stagacquisitions.com/investors',
 };
 
 function jsonResponse(status: number, body: unknown): Response {
@@ -130,6 +151,11 @@ describe('buildMessage', () => {
     expect(message).toContain('Notes: Tenant in place through March.');
   });
 
+  it('records the campaign on the timeline', () => {
+    expect(buildMessage({ ...lead, market: 'Scottsdale, AZ' })).toContain('Campaign: Scottsdale, AZ');
+    expect(buildMessage(lead)).not.toContain('Campaign:');
+  });
+
   it('records a declined SMS consent explicitly', () => {
     expect(buildMessage({ ...lead, smsConsent: false })).toContain('SMS consent: No');
   });
@@ -142,13 +168,90 @@ describe('buildMessage', () => {
   });
 });
 
+describe('buildMessage — buy-box submissions', () => {
+  it('summarizes the criteria for the FUB timeline', () => {
+    const message = buildMessage(investorLead);
+    expect(message).toContain('Buy box submission');
+    expect(message).toContain('Company: Feld Development');
+    expect(message).toContain('Asset types: Teardown / redevelopment, Land / lots');
+    expect(message).toContain('Target markets: Scottsdale, Paradise Valley');
+    expect(message).toContain('Price range: $1M – $3M');
+    expect(message).toContain('Scope: Teardown and rebuild');
+    expect(message).toContain('Volume: 6–12 deals a year');
+    expect(message).toContain('Financing: Hard money / bridge');
+    expect(message).toContain('SMS consent: No');
+  });
+
+  it('never labels a buy-box submission as a property', () => {
+    expect(buildMessage(investorLead)).not.toContain('Property:');
+  });
+
+  it('skips empty optional lines', () => {
+    const sparse = buildMessage({
+      ...investorLead,
+      organization: '',
+      assetTypes: '',
+      targetMarkets: '',
+      priceRange: '',
+      scope: '',
+      volume: '',
+      financing: '',
+      notes: '',
+    });
+    expect(sparse).toContain('Buy box submission');
+    for (const label of ['Company:', 'Asset types:', 'Price range:', 'Notes:']) {
+      expect(sparse, label).not.toContain(label);
+    }
+  });
+});
+
+describe('buildEventPayload — buy-box submissions', () => {
+  const payload = buildEventPayload(investorLead, config);
+
+  it('uses the buy-side event type', () => {
+    expect(payload.type).toBe(FUB_INVESTOR_EVENT_TYPE);
+    expect(payload.type).not.toBe(FUB_EVENT_TYPE);
+  });
+
+  it('carries no property or address, since a buy box has neither', () => {
+    expect(payload.property).toBeUndefined();
+    expect(payload.person.addresses).toBeUndefined();
+  });
+
+  it('still routes to the assignee with contact details intact', () => {
+    expect(payload.person.assignedTo).toBe('Stephen Dougherty');
+    expect(payload.person.phones?.[0]?.value).toBe('(480) 555-9090');
+    expect(payload.person.emails?.[0]?.value).toBe('marcus@example.com');
+  });
+
+  it('serializes to valid JSON', () => {
+    expect(() => JSON.parse(JSON.stringify(payload))).not.toThrow();
+  });
+});
+
 describe('buildTags', () => {
   it('always tags website seller leads', () => {
     expect(buildTags({ ...lead, smsConsent: false })).toEqual(['Website Lead', 'Seller']);
   });
 
+  it('tags the market when the lead came from a landing page', () => {
+    // This tag is what makes a mail campaign measurable in Follow Up Boss.
+    const tags = buildTags({ ...lead, market: 'South Nashville, TN' });
+    expect(tags).toContain('South Nashville, TN');
+    expect(tags).toContain('Seller');
+  });
+
+  it('adds no market tag for the generic seller form', () => {
+    expect(buildTags(lead)).toEqual(['Website Lead', 'Seller', 'SMS Consent']);
+  });
+
+  it('tags buy-side leads as investors, so the two sides stay filterable', () => {
+    expect(buildTags(investorLead)).toEqual(['Website Lead', 'Investor']);
+  });
+
   it('adds an SMS consent tag when consent was given', () => {
     expect(buildTags(lead)).toContain('SMS Consent');
+    expect(buildTags({ ...investorLead, smsConsent: true })).toContain('SMS Consent');
   });
 });
 

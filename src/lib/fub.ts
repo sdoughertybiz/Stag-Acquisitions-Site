@@ -1,10 +1,21 @@
 import { normalizePhone, parseAddress } from './parse';
-import type { CleanLead } from './validate';
+import type { CleanInvestorLead, CleanLead, CleanSellerLead } from './validate';
 
 export const FUB_EVENTS_URL = 'https://api.followupboss.com/v1/events';
 
-/** Follow Up Boss event type used for homeowners asking for a cash offer. */
+/** Follow Up Boss event type used for homeowners submitting a property. */
 export const FUB_EVENT_TYPE = 'Seller Inquiry';
+
+/**
+ * Event type used for buy-side clients sending us a buy box. Follow Up Boss
+ * only accepts values from its own fixed list, so change this with care.
+ */
+export const FUB_INVESTOR_EVENT_TYPE = 'General Inquiry';
+
+/** The event type Follow Up Boss should record for a given submission. */
+export function eventTypeFor(lead: CleanLead): string {
+  return lead.type === 'investor' ? FUB_INVESTOR_EVENT_TYPE : FUB_EVENT_TYPE;
+}
 
 export interface FubConfig {
   /** FUB API key — used as the HTTP Basic username with an empty password. */
@@ -62,54 +73,85 @@ export type FubResult =
  * person's timeline in Follow Up Boss.
  */
 export function buildMessage(lead: CleanLead): string {
-  const lines = [`Property: ${lead.address}`];
-  if (lead.condition) lines.push(`Condition: ${lead.condition}`);
-  if (lead.timeline) lines.push(`Timeline: ${lead.timeline}`);
+  const lines = lead.type === 'investor' ? investorLines(lead) : sellerLines(lead);
   lines.push(`SMS consent: ${lead.smsConsent ? 'Yes' : 'No'}`);
   if (lead.notes) lines.push('', `Notes: ${lead.notes}`);
   return lines.join('\n');
 }
 
-/** Tags applied to every lead so website submissions are filterable in FUB. */
+function sellerLines(lead: CleanSellerLead): string[] {
+  const lines = [`Property: ${lead.address}`];
+  if (lead.condition) lines.push(`Condition: ${lead.condition}`);
+  if (lead.timeline) lines.push(`Timeline: ${lead.timeline}`);
+  if (lead.market) lines.push(`Campaign: ${lead.market}`);
+  return lines;
+}
+
+function investorLines(lead: CleanInvestorLead): string[] {
+  const lines = ['Buy box submission'];
+  if (lead.organization) lines.push(`Company: ${lead.organization}`);
+  if (lead.assetTypes) lines.push(`Asset types: ${lead.assetTypes}`);
+  if (lead.targetMarkets) lines.push(`Target markets: ${lead.targetMarkets}`);
+  if (lead.priceRange) lines.push(`Price range: ${lead.priceRange}`);
+  if (lead.scope) lines.push(`Scope: ${lead.scope}`);
+  if (lead.volume) lines.push(`Volume: ${lead.volume}`);
+  if (lead.financing) lines.push(`Financing: ${lead.financing}`);
+  return lines;
+}
+
+/**
+ * Tags applied to every lead so website submissions are filterable in FUB.
+ * The second tag is the side of the deal, which is what the team filters on.
+ */
 export function buildTags(lead: CleanLead): string[] {
-  const tags = ['Website Lead', 'Seller'];
+  const tags = ['Website Lead', lead.type === 'investor' ? 'Investor' : 'Seller'];
+  // The market tag is what makes a mail campaign measurable in FUB.
+  if (lead.type === 'seller' && lead.market) tags.push(lead.market);
   if (lead.smsConsent) tags.push('SMS Consent');
   return tags;
 }
 
-/** Map a validated submission onto the Follow Up Boss `POST /v1/events` schema. */
+/**
+ * Map a validated submission onto the Follow Up Boss `POST /v1/events` schema.
+ *
+ * Seller submissions carry a property address, which is recorded both on the
+ * person and as the event's property. Buy-side submissions have no single
+ * address — their criteria live in the event message instead.
+ */
 export function buildEventPayload(lead: CleanLead, config: FubConfig): FubEventPayload {
-  const address = parseAddress(lead.address);
-
   const payload: FubEventPayload = {
     source: config.source,
     system: config.system,
-    type: FUB_EVENT_TYPE,
+    type: eventTypeFor(lead),
     message: buildMessage(lead),
     person: {
       firstName: lead.firstName,
       phones: [{ value: normalizePhone(lead.phone), type: 'mobile' }],
-      addresses: [
-        {
-          type: 'home',
-          street: address.street || address.raw,
-          city: address.city,
-          state: address.state,
-          code: address.code,
-          country: 'US',
-        },
-      ],
       tags: buildTags(lead),
       source: config.source,
       assignedTo: config.assignedTo,
     },
-    property: {
+  };
+
+  if (lead.type === 'seller') {
+    const address = parseAddress(lead.address);
+    payload.person.addresses = [
+      {
+        type: 'home',
+        street: address.street || address.raw,
+        city: address.city,
+        state: address.state,
+        code: address.code,
+        country: 'US',
+      },
+    ];
+    payload.property = {
       street: address.street || address.raw,
       city: address.city,
       state: address.state,
       code: address.code,
-    },
-  };
+    };
+  }
 
   if (lead.lastName) payload.person.lastName = lead.lastName;
   if (lead.email) payload.person.emails = [{ value: lead.email, type: 'home' }];

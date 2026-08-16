@@ -1,0 +1,168 @@
+---
+/**
+ * The seller intake, shared by /offer and every market landing page.
+ *
+ * It lives in one component so a landing page cannot drift from the canonical
+ * form or quietly ship without the assignment disclosure, which has to appear
+ * at the point of collection rather than only in the footer.
+ */
+import { conditionOptions, DISCLOSURE_SHORT, site, timelineOptions } from '../data/site';
+
+interface Props {
+  /** Set by a market landing page; tags the lead in Follow Up Boss. */
+  market?: string;
+  /** Copy for the inline success panel. */
+  successBody?: string;
+}
+
+const {
+  market = '',
+  successBody = 'We are checking the property against what our buyers are looking for right now. Expect a call from one of the owners — most sellers hear back the same day.',
+} = Astro.props;
+---
+
+<div class="form-status" id="form-status" role="alert" hidden></div>
+
+<div class="form-success" id="form-success" role="status" hidden>
+  <h3>Got it.</h3>
+  <p>{successBody}</p>
+</div>
+
+<form id="offer-form" class="offer-form" action="/api/lead" method="POST">
+  <!-- Tells the endpoint which intake this is. -->
+  <input type="hidden" name="leadType" value="seller" />
+  {market && <input type="hidden" name="market" value={market} />}
+
+  <!-- Bots fill hidden fields; humans never see this one. -->
+  <div class="honeypot" aria-hidden="true">
+    <label for="field-company">Company</label>
+    <input type="text" id="field-company" name="company" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <div class="form-row-split">
+    <div class="form-row">
+      <label for="field-first-name">First name</label>
+      <input
+        type="text"
+        id="field-first-name"
+        name="firstName"
+        required
+        autocomplete="given-name"
+        placeholder="First"
+      />
+      <span class="field-error" data-error-for="firstName"></span>
+    </div>
+    <div class="form-row">
+      <label for="field-last-name">Last name</label>
+      <input
+        type="text"
+        id="field-last-name"
+        name="lastName"
+        autocomplete="family-name"
+        placeholder="Last"
+      />
+      <span class="field-error" data-error-for="lastName"></span>
+    </div>
+  </div>
+
+  <div class="form-row-split">
+    <div class="form-row">
+      <label for="field-phone">Phone</label>
+      <input
+        type="tel"
+        id="field-phone"
+        name="phone"
+        required
+        autocomplete="tel"
+        inputmode="tel"
+        placeholder="(___) ___-____"
+      />
+      <span class="field-error" data-error-for="phone"></span>
+    </div>
+    <div class="form-row">
+      <label for="field-email">Email</label>
+      <input
+        type="email"
+        id="field-email"
+        name="email"
+        autocomplete="email"
+        inputmode="email"
+        placeholder="Optional"
+      />
+      <span class="field-error" data-error-for="email"></span>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <label for="field-address">Property address</label>
+    <input
+      type="text"
+      id="field-address"
+      name="address"
+      required
+      autocomplete="street-address"
+      placeholder="Street, city, state, ZIP"
+    />
+    <span class="field-error" data-error-for="address"></span>
+  </div>
+
+  <div class="form-row-split">
+    <div class="form-row">
+      <label for="field-condition">Condition</label>
+      <select id="field-condition" name="condition" required>
+        <option value="">Pick one</option>
+        {conditionOptions.map((option) => <option value={option}>{option}</option>)}
+      </select>
+    </div>
+    <div class="form-row">
+      <label for="field-timeline">Timeline</label>
+      <select id="field-timeline" name="timeline" required>
+        <option value="">Pick one</option>
+        {timelineOptions.map((option) => <option value={option}>{option}</option>)}
+      </select>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <label for="field-notes">Anything we should know?</label>
+    <textarea
+      id="field-notes"
+      name="notes"
+      placeholder="Tenant in place? Recent appraisal? Probate situation? Whatever is relevant."
+    ></textarea>
+  </div>
+
+  <div class="form-consent">
+    <input type="checkbox" id="field-sms-consent" name="smsConsent" value="yes" />
+    <label for="field-sms-consent">
+      <strong>Text me about my property.</strong> By checking this box I agree to receive SMS
+      messages from <strong>{site.name}</strong> about my offer, scheduling, closing, and follow-up
+      about my property. Message frequency varies. Message and data rates may apply. Reply
+      <strong>STOP</strong> to opt out, <strong>HELP</strong> for help. Consent is not a condition
+      of getting an offer. See our <a href="/privacy#sms-messaging">SMS &amp; Privacy terms</a>.
+    </label>
+  </div>
+
+  <!-- At the point of collection, not only in the footer: a seller should not
+       be able to submit without having passed this. -->
+  <div class="disclosure-note">
+    <h4>Before you send this</h4>
+    {DISCLOSURE_SHORT.map((paragraph) => <p>{paragraph}</p>)}
+    <p><a href="/disclosures">Read the full disclosures</a>.</p>
+  </div>
+
+  <div class="form-submit">
+    <button type="submit" class="cta">
+      <span class="cta-label">Send it</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+    </button>
+    <span class="muted" style="font-size: 0.84rem;">
+      We respond same-day, most days within the hour.
+    </span>
+  </div>
+
+  <p class="form-fineprint">
+    By submitting this form you agree we may contact you about your property by phone and email.
+    SMS contact requires the checkbox above. See our <a href="/privacy">Privacy Policy</a>.
+  </p>
+</form>

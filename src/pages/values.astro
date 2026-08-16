@@ -1,0 +1,140 @@
+---
+import Base from '../layouts/Base.astro';
+import Backdrop from '../components/Backdrop.astro';
+import { scripture, values } from '../data/site';
+
+const title = 'What We Stand For — Stag Acquisitions';
+const description =
+  'Stag Acquisitions is a family business built on Christian faith. That shows up as honest numbers, straight answers, no pressure, and being plain about where we stand in a deal.';
+---
+
+<Base title={title} description={description}>
+  <header class="hero hero-short">
+    <Backdrop
+      src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=2400&q=80"
+      variant="hero"
+      priority
+    />
+    <div class="hero-content">
+      <span class="eyebrow">Our values</span>
+      <h1>What we <em>stand for.</em></h1>
+      <p class="lead">
+        Most people find us at a hard moment — a house they cannot carry, an estate nobody wants to
+        deal with, a decision that has waited too long. How we handle that is the whole business.
+      </p>
+    </div>
+  </header>
+
+  <section class="section" id="faith">
+    <div class="section-inner" style="max-width: 900px;">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">At the center</span>
+        <h2>A family business built on faith.</h2>
+      </div>
+
+      <blockquote class="verse" data-reveal>
+        <p>{scripture.text}</p>
+        <cite>{scripture.reference} <span>({scripture.translation})</span></cite>
+      </blockquote>
+
+      <div class="prose" data-reveal>
+        <p class="lead">
+          We are a family-owned company, and our Christian faith is the reason we do this the way we
+          do. It is not a marketing line and it is not something we keep in a drawer for Sundays.
+        </p>
+        <p>
+          An honest scale is a small thing. Nobody applauds you for it and no one is watching most
+          of the time. That is exactly why it matters. In this business the temptation is always the
+          same — shade a number, stay quiet about something the other side has not asked, let a
+          person believe what is convenient for you. We are not willing to build on that, because we
+          believe we answer for it.
+        </p>
+        <p>
+          Real estate at this end of the market runs on people in difficult circumstances. Treating
+          them as a problem to be worked is the normal thing. We think it is the wrong thing. That
+          applies to everyone who calls us, without exception.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section bright" id="practice">
+    <div class="section-inner">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">In practice</span>
+        <h2>What that actually looks like.</h2>
+        <p class="lead">
+          Values are cheap to write down. These are the four we can be held to, and you are welcome
+          to hold us to them.
+        </p>
+      </div>
+
+      <div class="grid-4">
+        {values.map((value, index) => (
+          <div class="feature" data-reveal data-reveal-delay={String(index + 1)}>
+            <h3>{value.title}</h3>
+            <p>{value.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section ambient" id="where-we-stand">
+    <Backdrop
+      src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=2000&q=80"
+      variant="ambient"
+    />
+    <div class="section-inner" style="max-width: 860px;">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Where we stand</span>
+        <h2>Being honest with you includes<br />being honest about us.</h2>
+      </div>
+
+      <div class="prose" data-reveal>
+        <p class="lead">
+          Plenty of companies in this space stay vague about which side of the table they sit on.
+          We would rather tell you exactly where we sit, because a disclosure buried in paperwork is
+          not the same as saying it out loud.
+        </p>
+        <p>
+          We are a principal. We buy for our own account and in our own interest, and we may assign
+          the agreement to one of our developer or investor clients, who may close in our place. We
+          are not your agent or broker, we do not represent you, and we owe you no fiduciary duty.
+          Our interests and yours are not the same, and you should have your own attorney look at
+          anything before you sign it.
+        </p>
+        <p>
+          None of that conflicts with treating you honestly — it is the beginning of it. You cannot
+          deal straight with someone who is unclear about what you are.
+        </p>
+      </div>
+
+      <div style="margin-top: 3.5rem;" data-reveal>
+        <a class="cta-ghost" href="/disclosures">
+          Read the full disclosures
+          <span class="arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="final-cta">
+    <div class="section-inner center" style="max-width: 720px;">
+      <div data-reveal>
+        <span class="eyebrow">Next step</span>
+        <h2 style="margin: 1.5rem 0 2rem;">Talk to us and see.</h2>
+        <p class="lead" style="max-width: 50ch; margin: 0 auto 3rem;">
+          The fastest way to judge any of this is to put us on the phone and find out.
+        </p>
+        <div class="hero-cta" style="justify-content: center;">
+          <a class="cta" href="/offer">
+            Submit your property
+            <span class="arrow" aria-hidden="true">&rarr;</span>
+          </a>
+          <a class="cta-ghost" href="/investors">I am buying</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

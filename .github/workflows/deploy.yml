@@ -65,7 +65,9 @@ jobs:
 
       - name: Smoke-check the live site
         run: |
-          for path in / /how-it-works /markets /offer /privacy /robots.txt /llms.txt; do
+          for path in / /how-it-works /values /markets /investors /offer /disclosures \
+                      /privacy /nashville /brentwood /charlotte /scottsdale \
+                      /robots.txt /llms.txt; do
             for attempt in 1 2 3 4 5 6; do
               code=$(curl -s -o /dev/null -w '%{http_code}' \
                 "https://dougherty-acq-site.pdougher9.workers.dev${path}")
@@ -79,3 +81,11 @@ jobs:
             fi
             echo "  ${path} -> 200"
           done
+
+          # A mistyped postcard URL must land on our 404, not Cloudflare's.
+          body=$(curl -s "https://dougherty-acq-site.pdougher9.workers.dev/nashvile-typo-check")
+          if ! echo "$body" | grep -q "That page is not here"; then
+            echo "::error::unknown paths are not serving the custom 404 page"
+            exit 1
+          fi
+          echo "  404 handling -> ok"

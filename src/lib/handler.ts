@@ -1,12 +1,26 @@
 import { resolveFubConfig, type LeadEnv } from './env';
 import { sendLeadToFub } from './fub';
-import { isHoneypotTripped, validateLead, type RawLead } from './validate';
+import {
+  isHoneypotTripped,
+  resolveLeadType,
+  validateLead,
+  type LeadType,
+  type RawLead,
+} from './validate';
 
 export const CONTACT_FALLBACK =
   "We couldn't submit that just now. Please call or text (216) 488-8920 and we'll pick it up right away.";
 
-const SUCCESS_MESSAGE =
-  "Got it. We'll review the property and call you with a number — usually same day.";
+const SUCCESS_MESSAGE: Record<LeadType, string> = {
+  seller: "Got it. We'll review the property and call you with a number — usually same day.",
+  investor: "Got it. We'll call to walk through your criteria and start working your markets.",
+};
+
+/** Where a no-JS submission is sent back to, per intake. */
+const RETURN_PATH: Record<LeadType, string> = {
+  seller: '/offer',
+  investor: '/investors',
+};
 
 /**
  * Core POST /api/lead logic, deliberately framework-free so it can be exercised
@@ -34,9 +48,13 @@ export async function handleLeadRequest(
     return json({ ok: false, message: 'We could not read that submission.' }, 400);
   }
 
+  // Resolved before validation so an early return still lands the visitor back
+  // on the form they actually submitted.
+  const leadType = resolveLeadType(raw);
+
   // Bots fill hidden fields. Look successful, do nothing.
   if (isHoneypotTripped(raw)) {
-    return respond(wantsJson, { ok: true, message: SUCCESS_MESSAGE }, 200, 'ok');
+    return respond(wantsJson, { ok: true, message: SUCCESS_MESSAGE[leadType] }, 200, 'ok', leadType);
   }
 
   const validation = validateLead(raw);
@@ -46,23 +64,24 @@ export async function handleLeadRequest(
       { ok: false, message: 'Please check the highlighted fields.', errors: validation.errors },
       400,
       'invalid',
+      leadType,
     );
   }
 
   const configResult = resolveFubConfig(env);
   if (!configResult.ok) {
     console.error(`[lead] configuration error: ${configResult.error}`);
-    return respond(wantsJson, { ok: false, message: CONTACT_FALLBACK }, 500, 'error');
+    return respond(wantsJson, { ok: false, message: CONTACT_FALLBACK }, 500, 'error', leadType);
   }
 
   const result = await sendLeadToFub(validation.data, configResult.config, fetchImpl);
   if (!result.ok) {
-    // Logged for observability; the seller only ever sees the fallback text.
+    // Logged for observability; the visitor only ever sees the fallback text.
     console.error(`[lead] Follow Up Boss delivery failed (${result.status}): ${result.error}`);
-    return respond(wantsJson, { ok: false, message: CONTACT_FALLBACK }, 502, 'error');
+    return respond(wantsJson, { ok: false, message: CONTACT_FALLBACK }, 502, 'error', leadType);
   }
 
-  return respond(wantsJson, { ok: true, message: SUCCESS_MESSAGE }, 200, 'ok');
+  return respond(wantsJson, { ok: true, message: SUCCESS_MESSAGE[leadType] }, 200, 'ok', leadType);
 }
 
 async function readBody(request: Request): Promise<{ raw: RawLead; wantsJson: boolean }> {
@@ -93,11 +112,14 @@ function respond(
   body: LeadResponseBody,
   status: number,
   redirectStatus: 'ok' | 'invalid' | 'error',
+  leadType: LeadType,
 ): Response {
   if (wantsJson) return json(body, status);
+  const path = RETURN_PATH[leadType];
+  const anchor = leadType === 'investor' ? '#buy-box' : '#offer-form';
   return new Response(null, {
     status: 303,
-    headers: { Location: `/offer?status=${redirectStatus}#offer-form` },
+    headers: { Location: `${path}?status=${redirectStatus}${anchor}` },
   });
 }
 

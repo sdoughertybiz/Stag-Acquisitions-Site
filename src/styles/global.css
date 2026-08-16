@@ -8,7 +8,7 @@
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 body {
   font-family: var(--f-body);
-  color: var(--mist);
+  color: var(--ink-strong);
   background: var(--void);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -35,36 +35,54 @@ ul, ol { list-style: none; }
 
 /* -------- Tokens -------- */
 :root {
-  /* Brand palette, lifted from the Stag reference artwork. */
-  --sage:        #4A6650;
-  --sage-mid:    #6B8F71;
-  --sage-light:  #A8C5AC;
-  --sage-pale:   #E8EDE9;
-  --cream:       #FAF8F4;
-  --stone:       #F0EDE7;
-  --bark:        #2C2C27;
-  --tan:         #C8BBA8;
-  --body-text:   #5C5C52;
+  /* Official Stag Acquisitions palette, built from the hero button green.
+     These ten are the whole vocabulary — do not introduce colours outside it.
+     Anything below that is not one of these is an alpha blend of one of them. */
+  --mist:        #F1F3EF;   /* palest green — alternating band            */
+  --lichen:      #D3DCD2;   /* pale green — footer, hover fills           */
+  --fern:        #8FA391;   /* mid green — the mark on dark grounds       */
+  --sage:        #5C7560;   /* PRIMARY — CTA fill, accents, the mark      */
+  --pine:        #3B4B3B;   /* deep green — body copy, CTA hover          */
+  --moss:        #22251F;   /* near-black green — headings                */
+  --paper:       #FFFFFF;   /* pure white — raised card surfaces          */
+  --bone:        #F6F5F2;   /* off-white — page background                */
+  --stone-warm:  #8A867B;   /* warm grey — muted labels, never body copy  */
+  --char:        #14140F;   /* true black — the lockup lettering          */
 
-  /* Semantic aliases. The site was built dark-first, so these map the old
-     role names onto the new palette rather than renaming every rule. */
-  --void:        var(--cream);      /* page background */
-  --ink:         #F4F1EA;           /* footer / recessed surface */
-  --deep-ocean:  var(--sage-pale);
-  --ocean:       var(--sage-mid);
+  /* Semantic aliases mapping the older role names onto the palette.
+     NOTE: `--mist` above is the pale palette COLOUR. The ink tokens are
+     `--ink-strong` and `--ink-body` — never reuse a palette name for a text
+     colour, which is exactly how every heading once rendered pale-on-pale. */
+  --ink-strong:  var(--moss);    /* headings, .lead, emphasis              */
+  --ink-body:    var(--pine);    /* body copy                              */
 
-  --surface:     var(--stone);      /* the alternating "bright" band */
-  --mist:        var(--bark);       /* headings */
-  --dust:        var(--body-text);  /* body copy */
+  --void:        var(--bone);    /* page background                        */
+  --surface:     var(--mist);    /* the alternating "bright" band          */
+  --ink:         var(--lichen);  /* footer — a deliberate step down        */
 
-  --brass:       var(--sage);       /* primary accent + CTA fill */
-  --brass-soft:  var(--sage-mid);
-  --horizon:     #3A5040;           /* CTA hover — darker, not lighter */
+  --dust:        var(--ink-body);
+  --body-text:   var(--ink-body);
+  --bark:        var(--ink-strong);
+  --deep-ocean:  var(--mist);
+  --ocean:       var(--fern);
+  --stone:       var(--mist);
+  --cream:       var(--bone);
+  --tan:         var(--stone-warm);
 
-  --border-light:  rgba(44, 44, 39, 0.10);
-  --border-med:    rgba(44, 44, 39, 0.20);
-  --border-strong: rgba(44, 44, 39, 0.34);
+  --sage-mid:    var(--fern);
+  --sage-light:  var(--lichen);
+  --sage-pale:   var(--lichen);
 
+  --brass:       var(--sage);    /* primary accent + CTA fill              */
+  --brass-soft:  var(--fern);
+  --horizon:     var(--pine);    /* CTA hover — darker, not lighter        */
+
+  /* Borders are alpha blends of MOSS so they sit on any of the light grounds. */
+  --border-light:  rgba(34, 37, 31, 0.10);
+  --border-med:    rgba(34, 37, 31, 0.20);
+  --border-strong: rgba(34, 37, 31, 0.34);
+
+  /* The palette has no error colour; this is the one sanctioned addition. */
   --danger:      #B4472F;
 
   /* Legibility first. Playfair Display carries the upscale tone in headlines
@@ -90,7 +108,7 @@ h1, h2, h3, h4, .display {
   font-weight: 500;
   letter-spacing: -0.012em;
   line-height: 1.04;
-  color: var(--mist);
+  color: var(--ink-strong);
 }
 h1 { font-size: clamp(2.5rem, 6.2vw, 6.4rem); line-height: 1.02; }
 h2 { font-size: clamp(1.85rem, 4.2vw, 3.6rem); line-height: 1.08; }
@@ -101,11 +119,11 @@ em { font-style: italic; font-family: var(--f-display); font-weight: 500; }
 
 /* Body copy is set larger, looser, and brighter than before — the previous
    pairing was the readability complaint. */
-p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--dust); }
+p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--ink-body); }
 .lead {
   font-size: clamp(1.1rem, 1.3vw, 1.3rem);
   line-height: 1.6;
-  color: var(--mist);
+  color: var(--ink-strong);
   font-weight: 400;
 }
 
@@ -116,7 +134,9 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
   letter-spacing: 0.14em;
   text-transform: uppercase;
   font-weight: 600;
-  color: var(--brass);
+  /* PINE rather than SAGE. Sage clears AA on these grounds by a hair (4.5:1),
+     which is not enough for 12px letter-spaced caps. Pine is 8.3:1. */
+  color: var(--pine);
   display: inline-flex;
   align-items: center;
   gap: 1em;
@@ -125,7 +145,7 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
   content: '';
   width: 2.6em;
   height: 1px;
-  background: var(--brass);
+  background: var(--pine);
   display: inline-block;
   flex-shrink: 0;
 }
@@ -163,53 +183,92 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
               border-color var(--dur-med) var(--ease-lux);
   border-bottom: 1px solid transparent;
 }
+/* The hero overlay is lightest at top-right so the photograph stays visible —
+   which is where the nav sits. Without this scrim the links fall to ~3.2:1 over
+   a bright sky. Fades out once the nav gets its own solid background. */
+.nav::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background: linear-gradient(
+    180deg,
+    rgba(34, 37, 31, 0.74) 0%,
+    rgba(34, 37, 31, 0.40) 62%,
+    rgba(34, 37, 31, 0) 100%
+  );
+  transition: opacity var(--dur-med) var(--ease-lux);
+}
+.nav.scrolled::before { opacity: 0; }
+
+/* A page with no hero has no dark photograph for the transparent nav to sit
+   on, so it takes the solid treatment from the start. Mirrored in main.ts for
+   browsers without :has(). */
+body:not(:has(.hero)) .nav::before { opacity: 0; }
+body:not(:has(.hero)) .nav {
+  background: rgba(246, 245, 242, 0.88);
+  backdrop-filter: saturate(140%) blur(24px);
+  -webkit-backdrop-filter: saturate(140%) blur(24px);
+  border-bottom-color: var(--border-light);
+}
+body:not(:has(.hero)) .nav-links a { color: var(--ink-strong); }
+body:not(:has(.hero)) .nav-brand .lockup-mark { fill: var(--sage); }
+body:not(:has(.hero)) .nav-brand .lockup-text,
+body:not(:has(.hero)) .nav-brand .lockup-rule { fill: var(--char); }
+body:not(:has(.hero)) .nav-toggle::before,
+body:not(:has(.hero)) .nav-toggle::after { background: var(--ink-strong); }
+
+/* -------- 404 -------- */
+.notfound { padding-top: 14rem; }
+.notfound-suggest {
+  margin-top: 1.8rem;
+  font-size: 1.05rem;
+  color: var(--ink-strong);
+}
+.notfound-suggest[hidden] { display: none; }
+.notfound-suggest a {
+  color: var(--sage);
+  font-weight: 600;
+  border-bottom: 1px solid rgba(92, 117, 96, 0.4);
+}
+.notfound .chip-list li:hover { border-color: var(--sage); }
+@media (max-width: 820px) { .notfound { padding-top: 10rem; } }
 .nav.scrolled {
-  background: rgba(250, 248, 244, 0.88);
+  background: rgba(246, 245, 242, 0.88);
   backdrop-filter: saturate(140%) blur(24px);
   -webkit-backdrop-filter: saturate(140%) blur(24px);
   padding: 1rem 3rem;
   border-bottom-color: var(--border-light);
 }
- /* -------- Wordmark (shared by nav + footer) -------- */
-.wordmark {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.85rem;
-  line-height: 1;
-  /* Set explicitly, not inherited — the nav and footer previously picked up
-     different families by accident. */
-  font-family: var(--f-body);
-  text-transform: uppercase;
-}
-.wordmark .stag-mark {
+/* -------- Lockup (the brand artwork, shared by nav + footer) --------
+   The lettering is outlined in the artwork, so the nav and footer can no
+   longer drift apart typographically the way the old text wordmark did.
+   Everything inside is currentColor; `.lockup-mark` and `.lockup-text` are
+   overridden per context to keep the two-tone treatment. */
+.stag-lockup {
+  display: block;
+  /* Width and height attributes come from the component; `width: auto` keeps
+     the aspect ratio whenever a rule below overrides the height. */
+  width: auto;
   flex-shrink: 0;
   transition: transform var(--dur-med) var(--ease-lux);
 }
-.wordmark-text { display: flex; flex-direction: column; gap: 0.28rem; }
-.wordmark-text strong {
-  font-family: var(--f-body);
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  line-height: 1;
+.stag-lockup .lockup-mark,
+.stag-lockup .lockup-text,
+.stag-lockup .lockup-rule {
+  transition: fill var(--dur-med) var(--ease-lux);
 }
-.wordmark-text span {
-  font-family: var(--f-body);
-  font-weight: 400;
-  letter-spacing: 0.18em;
-  line-height: 1;
-}
-.wordmark-sm .stag-mark { width: 30px; height: 30px; }
-.wordmark-sm .wordmark-text strong { font-size: 1.5rem; }
-.wordmark-sm .wordmark-text span { font-size: 0.62rem; }
-.wordmark-lg .wordmark-text strong { font-size: clamp(1.6rem, 2.2vw, 2rem); }
-.wordmark-lg .wordmark-text span { font-size: 0.72rem; letter-spacing: 0.2em; }
 
 /* -------- Nav brand -------- */
 .nav-brand { display: flex; align-items: center; }
-.nav-brand .stag-mark { color: var(--brass); }
-.nav-brand:hover .stag-mark { transform: translateY(-2px); }
-.nav-brand .wordmark-text strong { color: var(--cream); }
-.nav-brand .wordmark-text span { color: rgba(250, 248, 244, 0.72); }
+.nav-brand:hover .stag-lockup { transform: translateY(-2px); }
+/* Over the hero photograph — the official all-white treatment. Fern-on-dark is
+   also sanctioned and is prettier, but the mark only reaches ~4:1 over a bright
+   photo where white reaches ~10:1. Legibility wins in the nav. */
+.nav-brand .lockup-mark { fill: var(--paper); }
+.nav-brand .lockup-text { fill: var(--paper); }
+.nav-brand .lockup-rule { fill: var(--paper); }
 
 .nav-links { display: flex; gap: 2.6rem; align-items: center; }
 .nav-links a {
@@ -235,8 +294,10 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
 
 /* Once the bar sits on cream instead of the hero photo, everything in it
    flips to the dark palette. */
-.nav.scrolled .nav-brand .wordmark-text strong { color: var(--bark); }
-.nav.scrolled .nav-brand .wordmark-text span { color: var(--body-text); }
+/* Once the nav sits on a light ground — the official "sage-on-light". */
+.nav.scrolled .nav-brand .lockup-mark { fill: var(--sage); }
+.nav.scrolled .nav-brand .lockup-text { fill: var(--char); }
+.nav.scrolled .nav-brand .lockup-rule { fill: var(--char); }
 .nav.scrolled .nav-links a { color: var(--bark); }
 .nav.scrolled .nav-links a:hover,
 .nav.scrolled .nav-links a[aria-current="page"] { color: var(--sage); }
@@ -258,6 +319,13 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
 .nav-toggle::after { bottom: 11px; }
 .nav-toggle[aria-expanded="true"]::before { transform: translateY(4px) rotate(45deg); }
 .nav-toggle[aria-expanded="true"]::after  { transform: translateY(-4px) rotate(-45deg); }
+
+/* Six nav items plus the full lockup need less air below ~1200px. Under
+   1025px they stop fitting at any spacing, so the drawer takes over instead. */
+@media (min-width: 901px) and (max-width: 1200px) {
+  .nav-links { gap: 1.5rem; }
+  .nav-links a { font-size: 0.74rem; letter-spacing: 0.07em; }
+}
 
 /* -------- Hero -------- */
 .hero {
@@ -293,8 +361,8 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
   background:
     /* Heaviest on the left, where the headline sits — the photography stays
        visible on the right instead of being flattened everywhere. */
-    linear-gradient(90deg, rgba(28,32,27,0.80) 0%, rgba(28,32,27,0.55) 42%, rgba(28,32,27,0.20) 78%),
-    linear-gradient(180deg, rgba(28,32,27,0.42) 0%, rgba(28,32,27,0.44) 40%, rgba(28,32,27,0.82) 100%);
+    linear-gradient(90deg, rgba(34,37,31,0.80) 0%, rgba(34,37,31,0.55) 42%, rgba(34,37,31,0.20) 78%),
+    linear-gradient(180deg, rgba(34,37,31,0.42) 0%, rgba(34,37,31,0.44) 40%, rgba(34,37,31,0.82) 100%);
 }
 
 /* A slow drift keeps the stills cinematic without shipping video. */
@@ -308,7 +376,7 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
 .hero-content .lead { color: var(--cream); }
 .hero-content .eyebrow { color: var(--sage-light); }
 .hero-content .eyebrow::before { background: var(--sage-light); }
-.hero-content .cta-ghost { color: var(--cream); border-color: rgba(250,248,244,0.45); }
+.hero-content .cta-ghost { color: var(--cream); border-color: rgba(246,245,242,0.45); }
 .hero-content .cta-ghost:hover { border-color: var(--cream); color: var(--cream); }
 
 .hero-content {
@@ -364,7 +432,7 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
   font-size: 0.72rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(250, 248, 244, 0.78);
+  color: rgba(246, 245, 242, 0.78);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -393,7 +461,8 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
   gap: 0.9em;
   padding: 1.2rem 2.2rem;
   background: var(--sage);
-  color: var(--cream);
+  /* PAPER, not BONE — buys back a little contrast on the sage fill. */
+  color: var(--paper);
   font-size: 0.82rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -408,7 +477,7 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
   background: var(--horizon);
   color: var(--cream);
   transform: translateY(-2px);
-  box-shadow: 0 18px 40px -14px rgba(74, 102, 80, 0.45);
+  box-shadow: 0 18px 40px -14px rgba(92, 117, 96, 0.45);
 }
 .cta[disabled] { opacity: 0.55; cursor: progress; transform: none; box-shadow: none; }
 .cta .arrow { transition: transform var(--dur-med) var(--ease-lux); }
@@ -419,7 +488,7 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
   align-items: center;
   gap: 0.9em;
   padding: 1.15rem 2rem;
-  color: var(--mist);
+  color: var(--ink-strong);
   border: 1px solid var(--border-strong);
   font-size: 0.82rem;
   letter-spacing: 0.1em;
@@ -455,39 +524,39 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
   inset: 0;
   background:
     linear-gradient(180deg,
-      rgba(31,42,34,0.95) 0%, rgba(31,42,34,0.86) 24%,
-      rgba(31,42,34,0.86) 76%, rgba(31,42,34,0.97) 100%),
-    radial-gradient(ellipse at 50% 50%, rgba(31,42,34,0.24) 0%, rgba(31,42,34,0.66) 100%);
+      rgba(34,37,31,0.95) 0%, rgba(34,37,31,0.86) 24%,
+      rgba(34,37,31,0.86) 76%, rgba(34,37,31,0.97) 100%),
+    radial-gradient(ellipse at 50% 50%, rgba(34,37,31,0.24) 0%, rgba(34,37,31,0.66) 100%);
 }
 
 /* Ambient bands are the dark counterpoint to the cream page. */
 .section.ambient h1, .section.ambient h2,
 .section.ambient h3, .section.ambient h4,
 .section.ambient .lead { color: var(--cream); }
-.section.ambient p { color: rgba(250, 248, 244, 0.82); }
+.section.ambient p { color: rgba(246, 245, 242, 0.82); }
 .section.ambient .eyebrow { color: var(--sage-light); }
 .section.ambient .eyebrow::before { background: var(--sage-light); }
 .section.ambient .feature,
 .section.ambient .callout {
-  border-color: rgba(250, 248, 244, 0.16);
-  background: rgba(250, 248, 244, 0.05);
+  border-color: rgba(246, 245, 242, 0.16);
+  background: rgba(246, 245, 242, 0.05);
 }
-.section.ambient .feature:hover { border-color: rgba(168, 197, 172, 0.55); }
+.section.ambient .feature:hover { border-color: rgba(211, 220, 210, 0.55); }
 .section.ambient .feature-num { color: var(--sage-light); }
-.section.ambient .cta-ghost { color: var(--cream); border-color: rgba(250,248,244,0.45); }
+.section.ambient .cta-ghost { color: var(--cream); border-color: rgba(246,245,242,0.45); }
 .section.ambient .cta-ghost:hover { border-color: var(--sage-light); color: var(--sage-light); }
 
 .section.bright { background: var(--stone); color: var(--bark); }
 .section.bright h1, .section.bright h2, .section.bright h3, .section.bright h4 { color: var(--bark); }
 .section.bright p { color: var(--body-text); }
 .section.bright .lead { color: var(--bark); }
-.section.bright .eyebrow { color: var(--sage); }
-.section.bright .eyebrow::before { background: var(--sage); }
-.section.bright .feature { border-color: rgba(44,44,39,0.12); background: rgba(250,248,244,0.55); }
+.section.bright .eyebrow { color: var(--pine); }
+.section.bright .eyebrow::before { background: var(--pine); }
+.section.bright .feature { border-color: rgba(34,37,31,0.12); background: rgba(246,245,242,0.55); }
 .section.bright .feature:hover { border-color: var(--sage); background: var(--cream); }
 .section.bright .feature-num { color: var(--sage); }
 .section.bright .stat-ribbon,
-.section.bright .stat { border-color: rgba(44,44,39,0.12); }
+.section.bright .stat { border-color: rgba(34,37,31,0.12); }
 .section.bright .stat-num { color: var(--sage); }
 .section.bright .stat-label { color: var(--body-text); }
 
@@ -504,7 +573,7 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
 .feature {
   padding: 2.4rem 2rem;
   border: 1px solid var(--border-light);
-  background: rgba(44, 44, 39, 0.022);
+  background: rgba(34, 37, 31, 0.022);
   transition: border-color var(--dur-med) var(--ease-lux), transform var(--dur-med) var(--ease-lux);
   position: relative;
   overflow: hidden;
@@ -514,12 +583,12 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(74, 102, 80, 0.07), transparent 40%);
+  background: linear-gradient(135deg, rgba(92, 117, 96, 0.07), transparent 40%);
   opacity: 0;
   transition: opacity var(--dur-med) var(--ease-lux);
   pointer-events: none;
 }
-.feature:hover { border-color: rgba(74, 102, 80, 0.42); transform: translateY(-4px); }
+.feature:hover { border-color: rgba(92, 117, 96, 0.42); transform: translateY(-4px); }
 .feature:hover::before { opacity: 1; }
 .feature-num {
   font-family: var(--f-display);
@@ -536,21 +605,196 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
 .feature-compact {
   padding: 2rem 1.6rem;
   border: 1px solid var(--border-light);
-  background: rgba(44, 44, 39, 0.022);
+  background: rgba(34, 37, 31, 0.022);
   transition: border-color var(--dur-med) var(--ease-lux), background var(--dur-med) var(--ease-lux);
   min-width: 0;
 }
-.feature-compact:hover { border-color: rgba(74, 102, 80, 0.42); background: var(--sage-pale); }
+.feature-compact:hover { border-color: rgba(92, 117, 96, 0.42); background: var(--sage-pale); }
 .feature-compact h4 { font-family: var(--f-display); font-size: 1.2rem; margin-bottom: 0.6rem; }
 .feature-compact p { font-size: 0.9rem; line-height: 1.5; }
 
 .callout {
   padding: 3.5rem 3rem;
   border: 1px solid var(--border-light);
-  background: rgba(44, 44, 39, 0.022);
+  background: rgba(34, 37, 31, 0.022);
 }
 .callout h3 { font-size: clamp(1.5rem, 2.4vw, 2rem); margin-bottom: 1.2rem; line-height: 1.2; }
 .callout p { max-width: 58ch; }
+
+/* -------- Testimonials -------- */
+.grid-1 { display: grid; grid-template-columns: minmax(0, 1fr); max-width: 760px; }
+.quote-card {
+  margin: 0;
+  padding: 2.8rem 2.4rem;
+  border: 1px solid var(--border-light);
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+  transition: border-color var(--dur-quick) var(--ease-lux),
+              transform var(--dur-quick) var(--ease-lux);
+}
+.quote-card:hover { border-color: rgba(92, 117, 96, 0.42); transform: translateY(-4px); }
+.quote-card blockquote { margin: 0; flex-grow: 1; }
+.quote-card blockquote p {
+  font-family: var(--f-display);
+  font-size: clamp(1.1rem, 1.5vw, 1.3rem);
+  line-height: 1.5;
+  color: var(--ink-strong);
+}
+/* The opening mark hangs into the margin so the text stays flush left. */
+.quote-card blockquote p::before {
+  content: '\201C';
+  color: var(--sage);
+  font-size: 1.4em;
+  line-height: 0;
+  margin-right: 0.1em;
+}
+.quote-card figcaption {
+  margin-top: 2rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.quote-name {
+  font-size: 0.82rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--ink-strong);
+}
+.quote-meta { font-size: 0.82rem; color: var(--ink-body); }
+/* Attribution for reviews earned at another business. Stated once for the
+   section; quiet, but never absent. */
+.quote-attribution {
+  margin-top: 1.2rem;
+  font-size: 0.88rem;
+  color: var(--ink-body);
+}
+
+/* -------- Neighbourhood chips (market landing pages) -------- */
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.chip-list li {
+  padding: 0.55rem 1.1rem;
+  border: 1px solid var(--border-med);
+  border-radius: 2px;
+  font-size: 0.88rem;
+  color: var(--ink-body);
+  background: rgba(246, 245, 242, 0.6);
+}
+
+/* -------- Path chooser (homepage: sellers vs. buy side) -------- */
+.path-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.8rem; }
+.path-card {
+  display: flex;
+  flex-direction: column;
+  padding: 3.5rem 3rem;
+  border: 1px solid var(--border-med);
+  background: rgba(34, 37, 31, 0.022);
+  transition: border-color var(--dur-quick) var(--ease-lux),
+              background var(--dur-quick) var(--ease-lux),
+              transform var(--dur-quick) var(--ease-lux);
+}
+.path-card:hover {
+  border-color: var(--brass);
+  background: var(--sage-pale);
+  transform: translateY(-4px);
+}
+.path-card .eyebrow { margin-bottom: 1.2rem; }
+.path-card h3 {
+  font-family: var(--f-display);
+  font-size: clamp(1.7rem, 2.6vw, 2.2rem);
+  line-height: 1.1;
+  margin-bottom: 1.2rem;
+}
+/* Push the CTA to the bottom so both cards align regardless of copy length. */
+.path-card p { margin-bottom: 2.2rem; flex-grow: 1; }
+.path-card .path-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--brass);
+}
+.path-card:hover .path-cta .arrow { transform: translateX(4px); }
+.path-card .path-cta .arrow { transition: transform var(--dur-med) var(--ease-lux); }
+/* Must live after the base rule above, not with the other grid breakpoints —
+   same specificity, so whichever comes last in the file wins. */
+@media (max-width: 960px) {
+  .path-grid { grid-template-columns: 1fr; gap: 1.6rem; }
+  .path-card { padding: 2.6rem 2rem; }
+}
+
+/* Multi-paragraph body copy. The global reset zeroes every margin, so stacked
+   <p> elements collapse into each other without this. */
+.prose p + p { margin-top: 1.4rem; }
+
+/* -------- Scripture / pull quote -------- */
+.verse {
+  margin: 0 0 3.5rem;
+  padding: 0 0 0 2.2rem;
+  border-left: 2px solid var(--brass);
+}
+.verse p {
+  font-family: var(--f-display);
+  font-style: italic;
+  font-size: clamp(1.4rem, 2.6vw, 2rem);
+  line-height: 1.35;
+  color: var(--ink-strong);
+  margin-bottom: 1.1rem;
+  max-width: 30ch;
+}
+.verse cite {
+  display: block;
+  font-style: normal;
+  font-size: 0.76rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--brass);
+}
+.verse cite span { opacity: 0.7; font-weight: 400; }
+.section.ambient .verse p { color: var(--cream); }
+.section.ambient .verse cite { color: var(--sage-light); }
+.section.ambient .verse { border-left-color: var(--sage-light); }
+
+/* -------- Inline disclosure (next to the seller form) -------- */
+.disclosure-note {
+  padding: 1.6rem 1.8rem;
+  border: 1px solid var(--border-med);
+  background: rgba(34, 37, 31, 0.028);
+}
+.disclosure-note h4 {
+  font-size: 0.74rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--ink-strong);
+  margin-bottom: 0.9rem;
+}
+.disclosure-note p {
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--body-text);
+  margin-bottom: 0.7rem;
+}
+.disclosure-note p:last-of-type { margin-bottom: 0; }
+.disclosure-note a {
+  color: var(--brass);
+  border-bottom: 1px solid rgba(92, 117, 96, 0.35);
+  font-weight: 500;
+}
 
 /* -------- Steps -------- */
 .steps { display: grid; gap: 0; max-width: 900px; margin: 0 auto; }
@@ -569,7 +813,7 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
   width: 9px; height: 9px;
   background: var(--brass);
   border-radius: 50%;
-  box-shadow: 0 0 0 5px var(--cream), 0 0 0 6px rgba(74, 102, 80, 0.45);
+  box-shadow: 0 0 0 5px var(--cream), 0 0 0 6px rgba(92, 117, 96, 0.45);
 }
 .step-num {
   font-size: 0.76rem;
@@ -587,7 +831,7 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
 .market-card {
   padding: 2.6rem 2.2rem;
   border: 1px solid var(--border-light);
-  background: rgba(44, 44, 39, 0.022);
+  background: rgba(34, 37, 31, 0.022);
   position: relative;
   overflow: hidden;
   transition: border-color var(--dur-med) var(--ease-lux), transform var(--dur-med) var(--ease-lux);
@@ -601,12 +845,12 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at bottom right, rgba(74, 102, 80, 0.10), transparent 60%);
+  background: radial-gradient(ellipse at bottom right, rgba(92, 117, 96, 0.10), transparent 60%);
   opacity: 0;
   transition: opacity var(--dur-med) var(--ease-lux);
   pointer-events: none;
 }
-.market-card:hover { border-color: rgba(74, 102, 80, 0.42); transform: translateY(-4px); }
+.market-card:hover { border-color: rgba(92, 117, 96, 0.42); transform: translateY(-4px); }
 .market-card:hover::after { opacity: 1; }
 .market-label {
   font-size: 0.72rem;
@@ -617,6 +861,21 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
 }
 .market-card h3 { font-size: clamp(1.7rem, 2.4vw, 2.1rem); line-height: 1.05; margin: 0.8rem 0 1.2rem; }
 .market-card p { font-size: 0.95rem; line-height: 1.5; }
+.market-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 1.4rem;
+  font-size: 0.76rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--pine);
+  border-bottom: 1px solid rgba(59, 75, 59, 0.35);
+  padding-bottom: 0.3rem;
+}
+.market-card:hover .market-link .arrow { transform: translateX(4px); }
+.market-link .arrow { transition: transform var(--dur-med) var(--ease-lux); }
 
 /* -------- Stat ribbon -------- */
 .stat-ribbon {
@@ -640,7 +899,7 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
   font-size: 0.74rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--dust);
+  color: var(--ink-body);
   font-weight: 500;
 }
 @media (max-width: 720px) {
@@ -666,23 +925,51 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
   border: none;
   border-bottom: 1px solid var(--border-med);
   padding: 0.9rem 0;
-  color: var(--mist);
+  color: var(--ink-strong);
   font-family: var(--f-body);
   font-size: 1.05rem;
   outline: none;
   transition: border-color var(--dur-med) var(--ease-lux);
   width: 100%;
 }
-.form-row input::placeholder, .form-row textarea::placeholder { color: #8C8C80; }
+.form-row input::placeholder, .form-row textarea::placeholder { color: var(--stone-warm); }
 .form-row input:focus, .form-row select:focus, .form-row textarea:focus { border-bottom-color: var(--brass); }
 .form-row textarea { resize: vertical; min-height: 120px; }
-.form-row select option { background: var(--void); color: var(--mist); }
+.form-row select option { background: var(--void); color: var(--ink-strong); }
 .form-row [aria-invalid="true"] { border-bottom-color: var(--danger); }
 .field-error { font-size: 0.8rem; color: var(--danger); min-height: 1em; }
 .field-error:empty { display: none; }
 
 .form-row-split { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
 @media (max-width: 640px) { .form-row-split { grid-template-columns: 1fr; } }
+
+/* -------- Multi-select group (buy-box asset types) -------- */
+.form-fieldset { border: 0; padding: 0; margin: 0; }
+.form-fieldset legend {
+  padding: 0;
+  margin-bottom: 1.1rem;
+  font-size: 0.74rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--body-text);
+}
+.checkbox-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.9rem 2rem; }
+@media (max-width: 640px) { .checkbox-grid { grid-template-columns: 1fr; } }
+.checkbox-item { display: flex; align-items: center; gap: 0.75rem; }
+.checkbox-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  accent-color: var(--brass);
+  cursor: pointer;
+}
+.checkbox-item label {
+  font-size: 0.95rem;
+  color: var(--ink-strong);
+  cursor: pointer;
+  line-height: 1.4;
+}
 
 .form-consent {
   display: grid;
@@ -695,7 +982,7 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
   border-radius: 2px;
   transition: border-color var(--dur-med) var(--ease-lux);
 }
-.form-consent:hover { border-color: rgba(74, 102, 80, 0.42); }
+.form-consent:hover { border-color: rgba(92, 117, 96, 0.42); }
 .form-consent input[type="checkbox"] {
   width: 1.15rem; height: 1.15rem;
   margin-top: 0.18rem;
@@ -706,16 +993,16 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
 .form-consent label {
   font-size: 0.86rem;
   line-height: 1.55;
-  color: var(--dust);
+  color: var(--ink-body);
   cursor: pointer;
   letter-spacing: 0;
   text-transform: none;
   font-weight: 400;
 }
-.form-consent label strong { color: var(--mist); font-weight: 500; }
+.form-consent label strong { color: var(--ink-strong); font-weight: 500; }
 .form-consent label a, .form-fineprint a {
   color: var(--brass);
-  border-bottom: 1px solid rgba(74, 102, 80, 0.35);
+  border-bottom: 1px solid rgba(92, 117, 96, 0.35);
 }
 .form-consent label a:hover, .form-fineprint a:hover { border-bottom-color: var(--brass); }
 
@@ -728,7 +1015,7 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
   border: 1px solid var(--danger);
   background: rgba(180, 71, 47, 0.06);
   font-size: 0.95rem;
-  color: var(--mist);
+  color: var(--ink-strong);
 }
 .form-status[hidden] { display: none; }
 
@@ -787,14 +1074,14 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
 .legal ul { margin: 0 0 1.4rem; padding-left: 1.4rem; }
 .legal li {
   font-size: 1rem;
-  color: var(--dust);
+  color: var(--ink-body);
   line-height: 1.65;
   margin-bottom: 0.6rem;
   list-style: disc outside;
 }
 .legal li::marker { color: var(--brass); }
-.legal strong { color: var(--mist); font-weight: 500; }
-.legal a { color: var(--brass); border-bottom: 1px solid rgba(74, 102, 80, 0.35); }
+.legal strong { color: var(--ink-strong); font-weight: 500; }
+.legal a { color: var(--brass); border-bottom: 1px solid rgba(92, 117, 96, 0.35); }
 .legal-meta {
   font-size: 0.78rem;
   letter-spacing: 0.08em;
@@ -819,28 +1106,49 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
   border-bottom: 1px solid var(--border-light);
 }
 @media (max-width: 820px) { .footer-inner { grid-template-columns: 1fr; gap: 2.4rem; } }
-.footer-wordmark { margin-bottom: 1.1rem; }
-.footer-wordmark .stag-mark { color: var(--sage); }
-.footer-wordmark .wordmark-text strong { color: var(--bark); }
-.footer-wordmark .wordmark-text span { color: var(--sage); }
-.footer-tag { font-size: 0.76rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dust); }
+.footer-wordmark { margin-bottom: 1.1rem; max-width: 100%; }
+/* "sage-on-light", same as the scrolled nav. */
+.footer-wordmark .lockup-mark { fill: var(--sage); }
+.footer-wordmark .lockup-text { fill: var(--char); }
+.footer-wordmark .lockup-rule { fill: var(--char); }
+.footer-tag { font-size: 0.76rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-body); }
 .footer-col h5 {
   font-size: 0.76rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--brass);
+  /* Not --brass: sage on the lichen footer is 3.58:1, short of AA at 12px. */
+  color: var(--pine);
   font-weight: 600;
   margin-bottom: 1.4rem;
 }
 .footer-col a, .footer-col p {
   display: block;
   font-size: 0.92rem;
-  color: var(--dust);
+  color: var(--ink-body);
   margin-bottom: 0.6rem;
   line-height: 1.5;
   transition: color var(--dur-quick) var(--ease-lux);
 }
-.footer-col a:hover { color: var(--brass); }
+/* Hover goes darker, not lighter — sage would drop below AA on lichen. */
+.footer-col a:hover { color: var(--moss); }
+.footer-disclosure {
+  max-width: var(--container);
+  margin: 3.5rem auto 0;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-light);
+}
+.footer-disclosure p {
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: var(--body-text);
+  max-width: 92ch;
+}
+.footer-disclosure a {
+  color: var(--pine);
+  border-bottom: 1px solid rgba(59, 75, 59, 0.45);
+  white-space: nowrap;
+}
+
 .footer-bottom {
   max-width: var(--container);
   margin: 2rem auto 0;
@@ -855,17 +1163,16 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
   text-transform: none;
 }
 
-/* -------- Mobile -------- */
-@media (max-width: 820px) {
-  .nav { padding: 1.2rem 1.5rem; }
-  .nav.scrolled { padding: 0.9rem 1.5rem; }
-  .nav-brand .wordmark-text strong { font-size: 1.25rem; }
-  .nav-brand .wordmark-text span { display: none; }
+/* -------- Nav drawer --------
+   The compact lockup is 4:1, so six links plus the wordmark fit down to ~900px;
+   below that the drawer takes over. */
+@media (max-width: 900px) {
+  .nav-brand .stag-lockup { height: 30px; }
   .nav-links {
     position: fixed;
     top: 0; right: 0; bottom: 0;
     width: min(80vw, 340px);
-    background: rgba(250, 248, 244, 0.98);
+    background: rgba(246, 245, 242, 0.98);
     backdrop-filter: blur(24px);
     flex-direction: column;
     justify-content: center;
@@ -879,6 +1186,13 @@ p { font-size: clamp(1.02rem, 1.05vw, 1.12rem); line-height: 1.7; color: var(--d
   .nav-links.open { transform: translateX(0); }
   .nav-links a { font-size: 1.1rem; letter-spacing: 0.06em; color: var(--bark); }
   .nav-toggle { display: block; z-index: 101; }
+}
+
+/* -------- Mobile -------- */
+@media (max-width: 820px) {
+  .nav { padding: 1.2rem 1.5rem; }
+  .nav.scrolled { padding: 0.9rem 1.5rem; }
+  .nav-brand .stag-lockup { height: 26px; }
 
   .hero, .section { padding-left: 1.5rem; padding-right: 1.5rem; }
   .hero { padding-top: 7.5rem; padding-bottom: 4rem; }

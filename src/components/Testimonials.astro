@@ -1,0 +1,86 @@
+---
+/**
+ * Renders whatever real testimonials exist, and nothing at all when there are
+ * none — an empty "What our sellers say" heading is worse than no section.
+ *
+ * See `testimonials` in src/data/site.ts before adding anything here.
+ */
+import { testimonials, type Testimonial } from '../data/site';
+
+interface Props {
+  eyebrow?: string;
+  heading?: string;
+  lead?: string;
+  /** Show only entries from this market, when a landing page passes one. */
+  location?: string;
+  /** Section background, to fit the alternating bands on the host page. */
+  variant?: 'plain' | 'bright';
+  max?: number;
+}
+
+const {
+  eyebrow = 'What sellers say',
+  heading = 'In their words.',
+  lead,
+  location,
+  variant = 'bright',
+  max = 3,
+} = Astro.props;
+
+const matches = (item: Testimonial): boolean =>
+  !location || (item.location ?? '').toLowerCase().includes(location.toLowerCase());
+
+// With a market set, show only that market's reviews and nothing otherwise —
+// Cleveland reviews under a "Sellers in Nashville" heading would read as local
+// work that never happened.
+const pool = location ? testimonials.filter(matches) : [...testimonials];
+const shown = pool.slice(0, max);
+
+/**
+ * Attribution for reviews earned at another business, stated once for the
+ * section rather than repeated on every card.
+ *
+ * Derived from the data, not from a prop — several of these quotes never name
+ * the business they were left for, so without this line they would read as
+ * Stag's own customers. That is the misrepresentation the FTC review rule is
+ * about, so it is not something a caller can switch off.
+ */
+const borrowedFrom = [...new Set(shown.map((t) => t.earnedAt).filter(Boolean))] as string[];
+const attribution =
+  borrowedFrom.length > 0
+    ? `Earned by Stephen at ${borrowedFrom.join(' and ')}, before Stag. Reproduced word for word.`
+    : null;
+---
+
+{shown.length > 0 && (
+  <section class={`section ${variant === 'bright' ? 'bright' : ''}`.trim()} id="testimonials">
+    <div class="section-inner">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">{eyebrow}</span>
+        <h2>{heading}</h2>
+        {lead && <p class="lead">{lead}</p>}
+        {attribution && <p class="quote-attribution">{attribution}</p>}
+      </div>
+
+      <div class={shown.length === 1 ? 'grid-1' : shown.length === 2 ? 'grid-2' : 'grid-3'}>
+        {shown.map((item, index) => (
+          <figure class="quote-card" data-reveal data-reveal-delay={String((index % 3) + 1)}>
+            <blockquote>
+              <p>{item.quote}</p>
+            </blockquote>
+            <figcaption>
+              <span class="quote-name">{item.name}</span>
+              {(item.location || item.context) && (
+                <span class="quote-meta">
+                  {item.location}
+                  {item.location && item.context && <> &middot; </>}
+                  {item.context}
+                </span>
+              )}
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+)}

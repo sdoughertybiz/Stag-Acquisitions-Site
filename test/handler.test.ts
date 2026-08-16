@@ -76,6 +76,104 @@ describe('handleLeadRequest — happy path', () => {
     expect(payload.property.city).toBe('Nashville');
   });
 
+  it('carries a landing page market through to Follow Up Boss', async () => {
+    const fetchMock = vi.fn(async () => created());
+    await handleLeadRequest(
+      jsonRequest({ ...validLead, market: 'Brentwood, TN' }),
+      env,
+      fetchMock as unknown as typeof fetch,
+    );
+
+    const [, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    const payload = JSON.parse(init.body as string);
+    // The tag is what makes a mail campaign measurable in FUB.
+    expect(payload.person.tags).toContain('Brentwood, TN');
+    expect(payload.person.tags).toContain('Seller');
+    expect(payload.message).toContain('Campaign: Brentwood, TN');
+
+    // Campaign and property location are independent on purpose: a Brentwood
+    // mailer regularly produces a property somewhere else, and both facts
+    // matter. The address must never be overwritten by the campaign.
+    expect(payload.property.city).toBe('Nashville');
+    expect(payload.message).toContain('Property: 123 Main St, Nashville, TN 37205');
+  });
+
+  it('leaves the generic seller form untagged', async () => {
+    const fetchMock = vi.fn(async () => created());
+    await handleLeadRequest(jsonRequest(validLead), env, fetchMock as unknown as typeof fetch);
+    const [, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    const payload = JSON.parse(init.body as string);
+    expect(payload.message).not.toContain('Campaign:');
+    expect(payload.person.tags).toEqual(['Website Lead', 'Seller', 'SMS Consent']);
+  });
+
+  it('routes a buy-box submission back to the investors page', async () => {
+    const fetchMock = vi.fn(async () => created());
+    const response = await handleLeadRequest(
+      formRequest({
+        leadType: 'investor',
+        firstName: 'Marcus',
+        phone: '(480) 555-9090',
+        organization: 'Feld Development',
+        priceRange: '$1M – $3M',
+      }),
+      env,
+      fetchMock as unknown as typeof fetch,
+    );
+
+    expect(response.status).toBe(303);
+    // A buy-box submitter must not be dumped on the seller form.
+    expect(response.headers.get('Location')).toContain('/investors?status=ok');
+    expect(response.headers.get('Location')).not.toContain('/offer');
+  });
+
+  it('sends a buy box to Follow Up Boss as an investor lead', async () => {
+    const fetchMock = vi.fn(async () => created());
+    await handleLeadRequest(
+      jsonRequest({
+        leadType: 'investor',
+        firstName: 'Marcus',
+        phone: '(480) 555-9090',
+        organization: 'Feld Development',
+        assetTypes: 'Land / lots',
+        targetMarkets: 'Scottsdale',
+      }),
+      env,
+      fetchMock as unknown as typeof fetch,
+    );
+
+    const [, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    const payload = JSON.parse(init.body as string);
+    expect(payload.person.tags).toContain('Investor');
+    expect(payload.person.tags).not.toContain('Seller');
+    expect(payload.message).toContain('Company: Feld Development');
+    expect(payload.property).toBeUndefined();
+  });
+
+  it('tells a buy-box submitter something other than the seller message', async () => {
+    const fetchMock = vi.fn(async () => created());
+    const response = await handleLeadRequest(
+      jsonRequest({ leadType: 'investor', firstName: 'Marcus', phone: '(480) 555-9090' }),
+      env,
+      fetchMock as unknown as typeof fetch,
+    );
+    const body = (await response.json()) as { ok: boolean; message: string };
+    expect(body.ok).toBe(true);
+    expect(body.message).toContain('criteria');
+    expect(body.message).not.toContain('property');
+  });
+
+  it('sends a validation failure on the buy side back to the investors page', async () => {
+    const fetchMock = vi.fn(async () => created());
+    const response = await handleLeadRequest(
+      formRequest({ leadType: 'investor', firstName: '', phone: '' }),
+      env,
+      fetchMock as unknown as typeof fetch,
+    );
+    expect(response.headers.get('Location')).toContain('/investors?status=invalid');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
   it('redirects a no-JS form post back to the offer page', async () => {
     const fetchMock = vi.fn(async () => created());
     const response = await handleLeadRequest(

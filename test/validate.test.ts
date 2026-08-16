@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { isHoneypotTripped, LIMITS, validateLead, type RawLead } from '../src/lib/validate';
+import {
+  isHoneypotTripped,
+  LIMITS,
+  resolveLeadType,
+  validateLead,
+  type RawLead,
+} from '../src/lib/validate';
 
 const good: RawLead = {
   firstName: 'Dana',
@@ -92,6 +98,68 @@ describe('validateLead', () => {
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.data.notes).toHaveLength(LIMITS.notes);
+  });
+});
+
+describe('lead type routing', () => {
+  const buyBox: RawLead = {
+    leadType: 'investor',
+    firstName: 'Marcus',
+    phone: '(480) 555-9090',
+    organization: 'Feld Development',
+    assetTypes: 'Land / lots, Teardown / redevelopment',
+    targetMarkets: 'Scottsdale, Paradise Valley',
+    priceRange: '$1M – $3M',
+    scope: 'Teardown and rebuild',
+    volume: '6–12 deals a year',
+    financing: 'Hard money / bridge',
+  };
+
+  it('defaults to a seller lead when no type is given', () => {
+    expect(resolveLeadType({})).toBe('seller');
+    expect(resolveLeadType({ leadType: 'nonsense' })).toBe('seller');
+  });
+
+  it('recognizes the buy-side intake regardless of casing', () => {
+    expect(resolveLeadType({ leadType: 'investor' })).toBe('investor');
+    expect(resolveLeadType({ leadType: '  Investor ' })).toBe('investor');
+  });
+
+  it('keeps every buy-box field', () => {
+    const result = validateLead(buyBox);
+    expect(result.ok).toBe(true);
+    if (!result.ok || result.data.type !== 'investor') throw new Error('expected an investor lead');
+    expect(result.data).toMatchObject({
+      organization: 'Feld Development',
+      assetTypes: 'Land / lots, Teardown / redevelopment',
+      targetMarkets: 'Scottsdale, Paradise Valley',
+      priceRange: '$1M – $3M',
+      scope: 'Teardown and rebuild',
+      volume: '6–12 deals a year',
+      financing: 'Hard money / bridge',
+    });
+  });
+
+  it('does not require a property address on the buy side', () => {
+    // The seller form gates on address; a buy box has no single property.
+    expect(validateLead(buyBox).ok).toBe(true);
+    expect(validateLead({ ...buyBox, leadType: 'seller' }).ok).toBe(false);
+  });
+
+  it('still requires a name and phone on the buy side', () => {
+    const result = validateLead({ ...buyBox, firstName: '', phone: '' });
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(Object.keys(result.errors).sort()).toEqual(['firstName', 'phone']);
+  });
+
+  it('gives multi-select values room to survive truncation', () => {
+    const many = 'Single-family, Small multifamily (2–4), Multifamily (5+), Land / lots';
+    const result = validateLead({ ...buyBox, assetTypes: many });
+    expect(result.ok).toBe(true);
+    if (!result.ok || result.data.type !== 'investor') throw new Error('expected an investor lead');
+    expect(result.data.assetTypes).toBe(many);
+    expect(LIMITS.multiChoice).toBeGreaterThan(LIMITS.choice);
   });
 });
 

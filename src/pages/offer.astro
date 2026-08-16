@@ -1,21 +1,22 @@
 ---
 import Base from '../layouts/Base.astro';
 import Backdrop from '../components/Backdrop.astro';
-import { conditionOptions, site, timelineOptions } from '../data/site';
+import SellerForm from '../components/SellerForm.astro';
+import { site } from '../data/site';
 
-const title = 'Get a Cash Offer — Stag Acquisitions';
+const title = 'Sell A Property — Stag Acquisitions';
 const description =
-  'Tell us about the property and we will come back with a straight cash number, usually the same day. No obligation, no showings, no commission.';
+  'Tell us about the property and we will tell you whether it matches what our developer and investor clients are actively buying — and what they are prepared to pay. No listing, no commission, no showings.';
 ---
 
 <Base title={title} description={description}>
   <header class="hero hero-short">
     <Backdrop src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=2400&q=80" variant="hero" priority />
     <div class="hero-content">
-      <span class="eyebrow">Get an offer</span>
+      <span class="eyebrow">Sell a property</span>
       <h1>Tell us about the <em>property.</em></h1>
       <p class="lead">
-        Ninety seconds now, a real number back the same day.
+        Ninety seconds now, and we will tell you whether it fits what our buyers are looking for.
       </p>
     </div>
   </header>
@@ -24,156 +25,20 @@ const description =
     <div class="section-inner">
       <div class="grid-2" style="gap: 5rem; align-items: start;">
         <div data-reveal>
-          <div class="form-status" id="form-status" role="alert" hidden></div>
-
-          <div class="form-success" id="form-success" role="status" hidden>
-            <h3>Got it.</h3>
-            <p>
-              We are pulling comps on the property now. Expect a call from one of the owners — most
-              sellers hear back the same day.
-            </p>
-          </div>
-
-          <form id="offer-form" class="offer-form" action="/api/lead" method="POST">
-            <!-- Bots fill hidden fields; humans never see this one. -->
-            <div class="honeypot" aria-hidden="true">
-              <label for="field-company">Company</label>
-              <input type="text" id="field-company" name="company" tabindex="-1" autocomplete="off" />
-            </div>
-
-            <div class="form-row-split">
-              <div class="form-row">
-                <label for="field-first-name">First name</label>
-                <input
-                  type="text"
-                  id="field-first-name"
-                  name="firstName"
-                  required
-                  autocomplete="given-name"
-                  placeholder="First"
-                />
-                <span class="field-error" data-error-for="firstName"></span>
-              </div>
-              <div class="form-row">
-                <label for="field-last-name">Last name</label>
-                <input
-                  type="text"
-                  id="field-last-name"
-                  name="lastName"
-                  autocomplete="family-name"
-                  placeholder="Last"
-                />
-                <span class="field-error" data-error-for="lastName"></span>
-              </div>
-            </div>
-
-            <div class="form-row-split">
-              <div class="form-row">
-                <label for="field-phone">Phone</label>
-                <input
-                  type="tel"
-                  id="field-phone"
-                  name="phone"
-                  required
-                  autocomplete="tel"
-                  inputmode="tel"
-                  placeholder="(___) ___-____"
-                />
-                <span class="field-error" data-error-for="phone"></span>
-              </div>
-              <div class="form-row">
-                <label for="field-email">Email</label>
-                <input
-                  type="email"
-                  id="field-email"
-                  name="email"
-                  autocomplete="email"
-                  inputmode="email"
-                  placeholder="Optional"
-                />
-                <span class="field-error" data-error-for="email"></span>
-              </div>
-            </div>
-
-            <div class="form-row">
-              <label for="field-address">Property address</label>
-              <input
-                type="text"
-                id="field-address"
-                name="address"
-                required
-                autocomplete="street-address"
-                placeholder="Street, city, state, ZIP"
-              />
-              <span class="field-error" data-error-for="address"></span>
-            </div>
-
-            <div class="form-row-split">
-              <div class="form-row">
-                <label for="field-condition">Condition</label>
-                <select id="field-condition" name="condition" required>
-                  <option value="">Pick one</option>
-                  {conditionOptions.map((option) => <option value={option}>{option}</option>)}
-                </select>
-              </div>
-              <div class="form-row">
-                <label for="field-timeline">Timeline</label>
-                <select id="field-timeline" name="timeline" required>
-                  <option value="">Pick one</option>
-                  {timelineOptions.map((option) => <option value={option}>{option}</option>)}
-                </select>
-              </div>
-            </div>
-
-            <div class="form-row">
-              <label for="field-notes">Anything we should know?</label>
-              <textarea
-                id="field-notes"
-                name="notes"
-                placeholder="Tenant in place? Recent appraisal? Probate situation? Whatever is relevant."
-              ></textarea>
-            </div>
-
-            <div class="form-consent">
-              <input type="checkbox" id="field-sms-consent" name="smsConsent" value="yes" />
-              <label for="field-sms-consent">
-                <strong>Text me about my property.</strong> By checking this box I agree to receive
-                SMS messages from <strong>{site.name}</strong> about my cash offer, scheduling,
-                closing, and follow-up about my property. Message frequency varies. Message and data
-                rates may apply. Reply <strong>STOP</strong> to opt out, <strong>HELP</strong> for
-                help. Consent is not a condition of getting an offer. See our
-                <a href="/privacy#sms-messaging">SMS &amp; Privacy terms</a>.
-              </label>
-            </div>
-
-            <div class="form-submit">
-              <button type="submit" class="cta">
-                <span class="cta-label">Send it</span>
-                <span class="arrow" aria-hidden="true">&rarr;</span>
-              </button>
-              <span class="muted" style="font-size: 0.84rem;">
-                We respond same-day, most days within the hour.
-              </span>
-            </div>
-
-            <p class="form-fineprint">
-              By submitting this form you agree we may contact you about your property by phone and
-              email. SMS contact requires the checkbox above. See our
-              <a href="/privacy">Privacy Policy</a>.
-            </p>
-          </form>
+          <SellerForm />
         </div>
 
         <aside data-reveal data-reveal-delay="2">
           <div class="callout">
             <h3>What happens next</h3>
             <p style="margin-bottom: 1.4rem;">
-              We pull comps for your street and condition, then call you with a single cash number
-              and the reasoning behind it. If it works, you pick the closing date.
+              We check the property against what our developer and investor clients are actively
+              buying, then call you with a number and the reasoning behind it. If it works, you
+              pick the closing date.
             </p>
             <p style="margin-bottom: 1.4rem;">
-              <strong class="brass">No commission.</strong> No showings. No repairs. No lender who
-              can back out in week three.
+              <strong class="brass">No commission.</strong> No showings. No repairs. No listing,
+              and no sign in the yard.
             </p>
             <p>
               Prefer to talk? Call or text
@@ -187,5 +52,5 @@ const description =
     </div>
   </section>
 
-  <script src="../scripts/offer-form.ts"></script>
+  <script src="../scripts/lead-form.ts"></script>
 </Base>

@@ -1,6 +1,6 @@
 ---
-import { marketSummary, nav, site } from '../data/site';
-import Wordmark from './Wordmark.astro';
+import { DISCLOSURE_FOOTER, marketSummary, nav, site } from '../data/site';
+import StagLockup from './StagLockup.astro';
 
 const year = 2026;
 ---
@@ -8,7 +8,7 @@ const year = 2026;
 <footer class="footer">
   <div class="footer-inner">
     <div>
-      <Wordmark markSize={46} size="lg" class="footer-wordmark" />
+      <StagLockup height={44} class="footer-wordmark" />
       <div class="footer-tag">{site.tagline}</div>
     </div>
 
@@ -25,14 +25,22 @@ const year = 2026;
 
     <div class="footer-col">
       <h5>Legal</h5>
+      <a href="/disclosures">Disclosures</a>
       <a href="/privacy">Privacy Policy</a>
       <a href="/privacy#sms-messaging">SMS Terms</a>
       <p>Reply STOP to opt out of SMS.</p>
     </div>
   </div>
 
+  <!-- Sitewide, so a seller cannot reach a form without having passed it. -->
+  <div class="footer-disclosure">
+    <p>
+      {DISCLOSURE_FOOTER} <a href="/disclosures">Read the full disclosures</a>.
+    </p>
+  </div>
+
   <div class="footer-bottom">
     <span>&copy; {year} {site.legalEntity} &middot; United States</span>
-    <span>Private investors &middot; Not a licensed real estate brokerage</span>
+    <span>Specialized acquisitions &middot; Not a licensed real estate brokerage</span>
   </div>
 </footer>

@@ -1,0 +1,240 @@
+---
+/**
+ * Market landing pages — one per campaign destination.
+ *
+ * These are built for someone holding a postcard, not someone evaluating the
+ * firm: the form sits directly under the hero rather than at the end of a
+ * brochure, and the copy leads with the city instead of the business model.
+ *
+ * Static routes win over this dynamic one in Astro, so /offer, /values and the
+ * rest are unaffected — only the slugs in `landingMarkets` are generated.
+ */
+import type { GetStaticPaths } from 'astro';
+import Base from '../layouts/Base.astro';
+import Backdrop from '../components/Backdrop.astro';
+import SellerForm from '../components/SellerForm.astro';
+import Testimonials from '../components/Testimonials.astro';
+import { landingMarkets, site, type LandingMarket } from '../data/site';
+
+export const getStaticPaths = (() =>
+  landingMarkets.map((market) => ({
+    params: { market: market.slug },
+    props: { market },
+  }))) satisfies GetStaticPaths;
+
+interface Props {
+  market: LandingMarket;
+}
+
+const { market } = Astro.props;
+const where = `${market.city}, ${market.state}`;
+
+const steps = [
+  {
+    num: '01',
+    title: 'Send the address',
+    body: 'Two minutes. Address, rough condition, and when you would want to be out.',
+  },
+  {
+    num: '02',
+    title: 'We check it against the box',
+    body: `We know what our clients are buying in ${market.city} right now. Usually we can tell you the same day.`,
+  },
+  {
+    num: '03',
+    title: 'A number, on the phone',
+    body: 'A short call with an owner. One figure and the reasoning behind it — not a range.',
+  },
+  {
+    num: '04',
+    title: 'You pick the date',
+    body: 'A simple written agreement. Have your attorney read it. You choose the closing date.',
+  },
+];
+
+const reasons = [
+  {
+    title: 'It needs work',
+    body: 'Roof, foundation, water damage, open permits, a kitchen from another decade. You are not fixing any of it.',
+  },
+  {
+    title: 'You inherited it',
+    body: 'Probate is done and nobody living nearby wants to manage a renovation and a listing.',
+  },
+  {
+    title: 'You are done being a landlord',
+    body: 'Sell quietly, tenant in place, without turning it or waiting on a lease to end.',
+  },
+  {
+    title: 'You need it done quickly',
+    body: 'A move, a job, a bank that is already moving. Speed and certainty are worth something.',
+  },
+];
+
+// LocalBusiness-style structured data so the page can surface for the city.
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name: `${site.name} — ${market.city}`,
+  description: market.description,
+  url: `${site.url}/${market.slug}`,
+  telephone: site.phone,
+  areaServed: { '@type': 'City', name: market.city, addressRegion: market.state },
+};
+---
+
+<Base title={market.title} description={market.description}>
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} is:inline />
+
+  <header class="hero hero-short">
+    <Backdrop src={market.heroImage} variant="hero" priority />
+    <div class="hero-content">
+      <span class="eyebrow">{where}</span>
+      <h1>Sell your {market.city} home <em>without listing it.</em></h1>
+      <p class="lead">{market.lead}</p>
+      <div class="hero-cta">
+        <a class="cta" href="#submit">
+          Get a number on your property
+          <span class="arrow" aria-hidden="true">&rarr;</span>
+        </a>
+        <a class="cta-ghost" href={`tel:${site.phone}`}>Or call {site.phoneDisplay}</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- The form comes first. Someone arriving from a mailer is here to act, not
+       to read a brochure. -->
+  <section class="section" id="submit">
+    <div class="section-inner">
+      <div class="grid-2" style="gap: 5rem; align-items: start;">
+        <div data-reveal>
+          <div class="section-head" style="margin-bottom: 3rem;">
+            <span class="eyebrow">Submit your property</span>
+            <h2>Tell us about the house.</h2>
+            <p class="lead">
+              Ninety seconds now, and a straight answer on whether it fits what our buyers are
+              looking for in {market.city}.
+            </p>
+          </div>
+
+          <SellerForm
+            market={market.tag}
+            successBody={`We are checking it against what our clients are buying in ${market.city} right now. Expect a call from one of the owners — most sellers hear back the same day.`}
+          />
+        </div>
+
+        <aside data-reveal data-reveal-delay="2">
+          <div class="callout">
+            <h3>What our buyers want here</h3>
+            <p style="margin-bottom: 1.4rem;">{market.demand}</p>
+            <p style="margin-bottom: 1.4rem;">
+              <strong class="brass">No commission.</strong> No showings. No repairs. No listing,
+              and no sign in the yard.
+            </p>
+            <p>
+              Prefer to talk? Call or text
+              <a href={`tel:${site.phone}`} style="color: var(--sage); font-weight: 600;"
+                >{site.phoneDisplay}</a
+              >.
+            </p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="section bright" id="area">
+    <div class="section-inner">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Where we work</span>
+        <h2>{market.city}, block by block.</h2>
+        {market.intro.map((paragraph) => <p class="lead" style="margin-top: 1.4rem;">{paragraph}</p>)}
+      </div>
+
+      <ul class="chip-list" data-reveal>
+        {market.neighborhoods.map((name) => <li>{name}</li>)}
+      </ul>
+
+      <p class="muted" style="margin-top: 2rem; font-size: 0.92rem;" data-reveal>
+        Not on the list? Send the address anyway — we will tell you straight whether it is a fit.
+      </p>
+    </div>
+  </section>
+
+  <section class="section" id="reasons">
+    <div class="section-inner">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Why people call us</span>
+        <h2>We do not need to know why you are selling.</h2>
+        <p class="lead">But here is what usually brings someone to this page.</p>
+      </div>
+
+      <div class="grid-4">
+        {reasons.map((item, index) => (
+          <div class="feature-compact" data-reveal data-reveal-delay={String(index + 1)}>
+            <h4>{item.title}</h4>
+            <p>{item.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <Testimonials
+    variant="bright"
+    location={market.city}
+    heading={`Sellers in ${market.city}.`}
+  />
+
+  <section class="section ambient" id="process">
+    <Backdrop
+      src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2000&q=80"
+      variant="ambient"
+    />
+    <div class="section-inner">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">How it works</span>
+        <h2>Four steps, start to close.</h2>
+      </div>
+
+      <div class="grid-4">
+        {steps.map((step, index) => (
+          <div class="feature" data-reveal data-reveal-delay={String(index + 1)}>
+            <span class="feature-num">{step.num}</span>
+            <h3>{step.title}</h3>
+            <p>{step.body}</p>
+          </div>
+        ))}
+      </div>
+
+      <div class="center" style="margin-top: 5rem;" data-reveal>
+        <a class="cta-ghost" href="/how-it-works">
+          Full process breakdown
+          <span class="arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section bright" id="final-cta">
+    <div class="section-inner center" style="max-width: 720px;">
+      <div data-reveal>
+        <span class="eyebrow">Ready</span>
+        <h2 style="margin: 1.5rem 0 2rem;">Send us the address.</h2>
+        <p class="lead" style="max-width: 52ch; margin: 0 auto 3rem;">
+          No obligation, and nothing is binding until both sides sign. Worst case we tell you it is
+          not a fit, and that costs you two minutes.
+        </p>
+        <div class="hero-cta" style="justify-content: center;">
+          <a class="cta" href="#submit">
+            Get a number on your property
+            <span class="arrow" aria-hidden="true">&rarr;</span>
+          </a>
+          <a class="cta-ghost" href={`tel:${site.phone}`}>Call {site.phoneDisplay}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="../scripts/lead-form.ts"></script>
+</Base>

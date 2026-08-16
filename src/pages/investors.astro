@@ -1,0 +1,351 @@
+---
+import Base from '../layouts/Base.astro';
+import Backdrop from '../components/Backdrop.astro';
+import {
+  assetTypes,
+  financingOptions,
+  priceRanges,
+  scopeOptions,
+  site,
+  volumeOptions,
+} from '../data/site';
+
+const title = 'For Developers & Investors — Stag Acquisitions';
+const description =
+  'Give us your buy box once. We source off-market properties that match it in Nashville, Scottsdale, Charlotte, and across the country, so your team can stay on the projects it already owns.';
+
+const problems = [
+  {
+    num: '01',
+    title: 'The good deals never hit the MLS',
+    body: 'By the time a property is listed, it has been seen by everyone with a search alert. The inventory worth buying moves before that.',
+  },
+  {
+    num: '02',
+    title: 'Sourcing competes with building',
+    body: 'Someone on your team has to make the calls, work the owners, and chase the follow-ups. That someone usually has a project running.',
+  },
+  {
+    num: '03',
+    title: 'Volume is not the same as fit',
+    body: 'Lead lists and blast emails produce noise. What you need is the handful of properties that actually clear your numbers.',
+  },
+];
+
+const deliver = [
+  {
+    title: 'A defined box',
+    body: 'One conversation to set asset type, markets, price band, scope, and pace. We work to that, not to whatever turns up.',
+  },
+  {
+    title: 'Direct-to-owner sourcing',
+    body: 'We work our markets off-market — outreach, owner conversations, and the follow-up that most acquisition teams cannot staff.',
+  },
+  {
+    title: 'Filtered, not forwarded',
+    body: 'You get properties that clear your criteria, with the condition and situation already understood. Not a feed to sort through.',
+  },
+  {
+    title: 'Terms already in motion',
+    body: 'When a property fits, price and timing have already been worked through with the owner before it reaches you.',
+  },
+];
+---
+
+<Base title={title} description={description}>
+  <header class="hero hero-short">
+    <Backdrop
+      src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=2400&q=80"
+      variant="hero"
+      priority
+    />
+    <div class="hero-content">
+      <span class="eyebrow">For developers &amp; investors</span>
+      <h1>Your buy box, <em>worked daily.</em></h1>
+      <p class="lead">
+        Tell us what you are buying and where. We go find it off-market so your team can stay on
+        the projects it already owns.
+      </p>
+      <div class="hero-cta">
+        <a class="cta" href="#buy-box">
+          Send us your buy box
+          <span class="arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <section class="section" id="problem">
+    <div class="section-inner">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">The problem</span>
+        <h2>You are not short on capital.<br />You are short on hours.</h2>
+        <p class="lead">
+          Every developer and investor we work with can fund another deal. What they cannot do is
+          run a sourcing operation on top of everything else.
+        </p>
+      </div>
+
+      <div class="grid-3">
+        {problems.map((item, index) => (
+          <div class="feature" data-reveal data-reveal-delay={String(index + 1)}>
+            <span class="feature-num">{item.num}</span>
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section ambient" id="what-you-get">
+    <Backdrop
+      src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2000&q=80"
+      variant="ambient"
+    />
+    <div class="section-inner">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">What you get</span>
+        <h2>Specialized acquisitions, defined.</h2>
+        <p class="lead">
+          It is a simple arrangement: you tell us the box once, and we work it until something
+          fits.
+        </p>
+      </div>
+
+      <div class="grid-4">
+        {deliver.map((item, index) => (
+          <div class="feature" data-reveal data-reveal-delay={String(index + 1)}>
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section bright" id="buy-box">
+    <div class="section-inner">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Your buy box</span>
+        <h2>Tell us what you are looking for.</h2>
+        <p class="lead">
+          The more specific you are, the less of your time we waste. Everything below is optional
+          except how to reach you.
+        </p>
+      </div>
+
+      <div class="grid-2" style="gap: 5rem; align-items: start;">
+        <div data-reveal>
+          <div class="form-status" id="form-status" role="alert" hidden></div>
+
+          <div class="form-success" id="form-success" role="status" hidden>
+            <h3>Got it.</h3>
+            <p>
+              We have your criteria. One of the owners will reach out to walk through it and start
+              working your markets.
+            </p>
+          </div>
+
+          <form id="buybox-form" class="offer-form" action="/api/lead" method="POST">
+            <!-- Tells the endpoint which intake this is. -->
+            <input type="hidden" name="leadType" value="investor" />
+
+            <!-- Bots fill hidden fields; humans never see this one. -->
+            <div class="honeypot" aria-hidden="true">
+              <label for="field-website">Website</label>
+              <input type="text" id="field-website" name="company" tabindex="-1" autocomplete="off" />
+            </div>
+
+            <div class="form-row-split">
+              <div class="form-row">
+                <label for="field-first-name">First name</label>
+                <input
+                  type="text"
+                  id="field-first-name"
+                  name="firstName"
+                  required
+                  autocomplete="given-name"
+                  placeholder="First"
+                />
+                <span class="field-error" data-error-for="firstName"></span>
+              </div>
+              <div class="form-row">
+                <label for="field-last-name">Last name</label>
+                <input
+                  type="text"
+                  id="field-last-name"
+                  name="lastName"
+                  autocomplete="family-name"
+                  placeholder="Last"
+                />
+                <span class="field-error" data-error-for="lastName"></span>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label for="field-org">Company</label>
+              <input
+                type="text"
+                id="field-org"
+                name="organization"
+                autocomplete="organization"
+                placeholder="Your firm or entity"
+              />
+              <span class="field-error" data-error-for="organization"></span>
+            </div>
+
+            <div class="form-row-split">
+              <div class="form-row">
+                <label for="field-phone">Phone</label>
+                <input
+                  type="tel"
+                  id="field-phone"
+                  name="phone"
+                  required
+                  autocomplete="tel"
+                  inputmode="tel"
+                  placeholder="(___) ___-____"
+                />
+                <span class="field-error" data-error-for="phone"></span>
+              </div>
+              <div class="form-row">
+                <label for="field-email">Email</label>
+                <input
+                  type="email"
+                  id="field-email"
+                  name="email"
+                  autocomplete="email"
+                  inputmode="email"
+                  placeholder="Optional"
+                />
+                <span class="field-error" data-error-for="email"></span>
+              </div>
+            </div>
+
+            <fieldset class="form-fieldset">
+              <legend>Asset types you buy</legend>
+              <div class="checkbox-grid">
+                {assetTypes.map((type, index) => (
+                  <div class="checkbox-item">
+                    <input
+                      type="checkbox"
+                      id={`field-asset-${index}`}
+                      name="assetTypes"
+                      value={type}
+                    />
+                    <label for={`field-asset-${index}`}>{type}</label>
+                  </div>
+                ))}
+              </div>
+            </fieldset>
+
+            <div class="form-row">
+              <label for="field-markets">Target markets</label>
+              <input
+                type="text"
+                id="field-markets"
+                name="targetMarkets"
+                placeholder="Cities, counties, or ZIPs you want worked"
+              />
+              <span class="field-error" data-error-for="targetMarkets"></span>
+            </div>
+
+            <div class="form-row-split">
+              <div class="form-row">
+                <label for="field-price">Price range</label>
+                <select id="field-price" name="priceRange">
+                  <option value="">Pick one</option>
+                  {priceRanges.map((option) => <option value={option}>{option}</option>)}
+                </select>
+              </div>
+              <div class="form-row">
+                <label for="field-scope">Scope of work</label>
+                <select id="field-scope" name="scope">
+                  <option value="">Pick one</option>
+                  {scopeOptions.map((option) => <option value={option}>{option}</option>)}
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row-split">
+              <div class="form-row">
+                <label for="field-volume">Deal volume</label>
+                <select id="field-volume" name="volume">
+                  <option value="">Pick one</option>
+                  {volumeOptions.map((option) => <option value={option}>{option}</option>)}
+                </select>
+              </div>
+              <div class="form-row">
+                <label for="field-financing">How you fund</label>
+                <select id="field-financing" name="financing">
+                  <option value="">Pick one</option>
+                  {financingOptions.map((option) => <option value={option}>{option}</option>)}
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label for="field-notes">Anything else about the box?</label>
+              <textarea
+                id="field-notes"
+                name="notes"
+                placeholder="Return thresholds, unit counts, lot size, zoning, streets you already own on — whatever matters."
+              ></textarea>
+            </div>
+
+            <div class="form-consent">
+              <input type="checkbox" id="field-sms-consent" name="smsConsent" value="yes" />
+              <label for="field-sms-consent">
+                <strong>Text me when something fits.</strong> By checking this box I agree to
+                receive SMS messages from <strong>{site.name}</strong> about properties matching my
+                criteria, scheduling, and follow-up. Message frequency varies. Message and data
+                rates may apply. Reply <strong>STOP</strong> to opt out, <strong>HELP</strong> for
+                help. Consent is not a condition of working with us. See our
+                <a href="/privacy#sms-messaging">SMS &amp; Privacy terms</a>.
+              </label>
+            </div>
+
+            <div class="form-submit">
+              <button type="submit" class="cta">
+                <span class="cta-label">Send the box</span>
+                <span class="arrow" aria-hidden="true">&rarr;</span>
+              </button>
+              <span class="muted" style="font-size: 0.84rem;">
+                We respond same-day, most days within the hour.
+              </span>
+            </div>
+
+            <p class="form-fineprint">
+              By submitting this form you agree we may contact you about acquisitions by phone and
+              email. SMS contact requires the checkbox above. See our
+              <a href="/privacy">Privacy Policy</a>.
+            </p>
+          </form>
+        </div>
+
+        <aside data-reveal data-reveal-delay="2">
+          <div class="callout">
+            <h3>What happens next</h3>
+            <p style="margin-bottom: 1.4rem;">
+              One of the owners calls you to pressure-test the box — the numbers that have to work,
+              the streets you want, the scope you will actually take on.
+            </p>
+            <p style="margin-bottom: 1.4rem;">
+              <strong class="brass">Then we go to work.</strong> You hear from us when something
+              fits, not before.
+            </p>
+            <p>
+              Prefer to talk first? Call or text
+              <a href={`tel:${site.phone}`} style="color: var(--sage); font-weight: 600;"
+                >{site.phoneDisplay}</a
+              >.
+            </p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <script src="../scripts/lead-form.ts"></script>
+</Base>

@@ -1,22 +1,22 @@
 ---
 import Base from '../layouts/Base.astro';
 import Backdrop from '../components/Backdrop.astro';
-import { markets } from '../data/site';
+import { landingMarkets, markets } from '../data/site';
 
-const title = 'Markets — Where Stag Acquisitions Buys';
+const title = 'Markets — Where Stag Acquisitions Sources';
 const description =
-  'We buy homes in Nashville, Tennessee; Scottsdale, Arizona; Charlotte, North Carolina; and across the United States. Off-market, cash, any condition.';
+  'We source off-market property in Nashville, Tennessee; Scottsdale, Arizona; Charlotte, North Carolina; and across the United States for our developer and investor clients.';
 
 const criteria = [
   {
     letter: 'A',
     title: 'Situation',
-    body: 'A seller motivated by time, condition, or a life event. Speed and certainty have to be worth something to you.',
+    body: 'An owner motivated by time, condition, or a life event. Speed and certainty have to be worth more than the last few percent.',
   },
   {
     letter: 'B',
     title: 'Numbers',
-    body: 'A price that leaves room for the work the property needs. We are not chasing trophy deals.',
+    body: 'A price that leaves room for the work the property needs, and that clears a client buy box we are actively working.',
   },
   {
     letter: 'C',
@@ -34,15 +34,15 @@ const criteria = [
       priority
     />
     <div class="hero-content">
-      <span class="eyebrow">Where we buy</span>
+      <span class="eyebrow">Where we work</span>
       <h1>Three home markets.<br /><em>One country.</em></h1>
       <p class="lead">
-        Nashville, Scottsdale, and Charlotte are where we know the comps block by block. We buy
-        everywhere else too.
+        Nashville, Scottsdale, and Charlotte are where we know the comps block by block. Our
+        clients buy everywhere else too.
       </p>
       <div class="hero-cta">
         <a class="cta" href="/offer">
-          Submit your address
+          Submit your property
           <span class="arrow" aria-hidden="true">&rarr;</span>
         </a>
       </div>
@@ -55,7 +55,7 @@ const criteria = [
         <span class="eyebrow">Our markets</span>
         <h2>The markets we live in.</h2>
         <p class="lead">
-          In these three we can put a number in front of you the same day you call.
+          In these three we can tell you the same day whether a property fits a client's criteria.
         </p>
       </div>
 
@@ -73,6 +73,38 @@ const criteria = [
     </div>
   </section>
 
+  <section class="section bright" id="selling">
+    <div class="section-inner">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Selling a property?</span>
+        <h2>Start where your property is.</h2>
+        <p class="lead">
+          Each of these goes straight to the intake for that area, with what our buyers are looking
+          for there.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        {landingMarkets.map((landing, index) => (
+          <a
+            class="path-card"
+            href={`/${landing.slug}`}
+            data-reveal
+            data-reveal-delay={String(index + 1)}
+          >
+            <span class="eyebrow">{landing.city}, {landing.state}</span>
+            <h3>Selling in {landing.city}</h3>
+            <p>{landing.demand}</p>
+            <span class="path-cta">
+              Get a number
+              <span class="arrow" aria-hidden="true">&rarr;</span>
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
   <section class="section ambient" id="criteria">
     <Backdrop
       src="https://images.unsplash.com/photo-1449844908441-8829872d2607?auto=format&fit=crop&w=2000&q=80"
@@ -81,9 +113,9 @@ const criteria = [
     <div class="section-inner">
       <div class="section-head" data-reveal>
         <span class="eyebrow">The fit test</span>
-        <h2>What makes a property work for us.</h2>
+        <h2>What makes a property a fit.</h2>
         <p class="lead">
-          Three things decide whether we can move quickly.
+          Three things decide whether we can move quickly on a property.
         </p>
       </div>
 
@@ -108,7 +140,7 @@ const criteria = [
           Worst case we tell you it is not a fit. That costs you two minutes.
         </p>
         <a class="cta" href="/offer">
-          Get a cash offer
+          Submit your property
           <span class="arrow" aria-hidden="true">&rarr;</span>
         </a>
       </div>

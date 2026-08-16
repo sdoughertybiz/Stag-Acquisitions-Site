@@ -1,0 +1,107 @@
+---
+/**
+ * Served by Cloudflare for any path that does not resolve — see
+ * `assets.not_found_handling` in wrangler.jsonc.
+ *
+ * The main cause of 404s here will be a URL typed off a postcard, so this page
+ * is built to recover that visit rather than apologise: the market pages are
+ * one tap away, the phone number is prominent, and a script suggests the
+ * closest match when the path is a near miss.
+ */
+import Base from '../layouts/Base.astro';
+import { landingMarkets, nav, site } from '../data/site';
+
+const title = 'Page Not Found — Stag Acquisitions';
+const description =
+  'That page does not exist. Find the market you are selling in, submit your property, or call us directly.';
+---
+
+<Base title={title} description={description} noindex>
+  <section class="section notfound">
+    <div class="section-inner" style="max-width: 900px;">
+      <div data-reveal>
+        <span class="eyebrow">404</span>
+        <h1 style="margin: 1.4rem 0 1.6rem;">That page is not here.</h1>
+        <p class="lead" style="max-width: 56ch;">
+          Most likely a typo in a printed address. Nothing is lost — pick your market below, or
+          call and we will take the details over the phone.
+        </p>
+
+        <!-- Filled in by the script when the path is close to a real page. -->
+        <p class="notfound-suggest" id="did-you-mean" hidden></p>
+
+        <div class="hero-cta" style="margin-top: 2.6rem;">
+          <a class="cta" href="/offer">
+            Submit your property
+            <span class="arrow" aria-hidden="true">&rarr;</span>
+          </a>
+          <a class="cta-ghost" href={`tel:${site.phone}`}>Call {site.phoneDisplay}</a>
+        </div>
+      </div>
+
+      <div style="margin-top: 5rem;" data-reveal>
+        <span class="eyebrow">Selling in one of these?</span>
+        <div class="grid-2" style="margin-top: 2rem;">
+          {landingMarkets.map((market) => (
+            <a class="path-card" href={`/${market.slug}`}>
+              <span class="eyebrow">{market.city}, {market.state}</span>
+              <h3>Selling in {market.city}</h3>
+              <span class="path-cta">
+                Get a number
+                <span class="arrow" aria-hidden="true">&rarr;</span>
+              </span>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <div style="margin-top: 4rem;" data-reveal>
+        <span class="eyebrow">Everything else</span>
+        <ul class="chip-list" style="margin-top: 1.6rem;">
+          {nav.map((item) => (
+            <li><a href={item.href}>{item.label}</a></li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline define:vars={{ slugs: landingMarkets.map((m) => ({ slug: m.slug, city: m.city })) }}>
+    // A postcard typo is the likeliest way anyone lands here, so offer the
+    // nearest market page rather than making them navigate from scratch.
+    (function () {
+      const typed = location.pathname.replace(/^\/|\.html$|\/$/g, '').toLowerCase();
+      if (!typed) return;
+
+      const distance = (a, b) => {
+        const rows = Array.from({ length: b.length + 1 }, (_, i) => [i]);
+        for (let j = 0; j <= a.length; j++) rows[0][j] = j;
+        for (let i = 1; i <= b.length; i++) {
+          for (let j = 1; j <= a.length; j++) {
+            rows[i][j] = Math.min(
+              rows[i - 1][j] + 1,
+              rows[i][j - 1] + 1,
+              rows[i - 1][j - 1] + (a[j - 1] === b[i - 1] ? 0 : 1),
+            );
+          }
+        }
+        return rows[b.length][a.length];
+      };
+
+      let best = null;
+      for (const entry of slugs) {
+        const d = distance(typed, entry.slug);
+        // Roughly a quarter of the slug may be wrong before we stop guessing.
+        if (d <= Math.max(2, Math.floor(entry.slug.length / 4)) && (!best || d < best.d)) {
+          best = { d, ...entry };
+        }
+      }
+      if (!best) return;
+
+      const el = document.getElementById('did-you-mean');
+      el.innerHTML =
+        'Did you mean <a href="/' + best.slug + '">Selling in ' + best.city + '</a>?';
+      el.hidden = false;
+    })();
+  </script>
+</Base>

@@ -1,8 +1,28 @@
 # Stag Acquisitions — marketing site
 
-Astro 5 marketing site for **Stag Acquisitions**, a family-owned real estate
-investment group. Static pages plus one server route that pushes seller
-inquiries into Follow Up Boss as leads assigned to **Stephen Dougherty**.
+Astro 5 marketing site for **Stag Acquisitions**, a family-owned specialized
+acquisitions firm. Developers and investors give Stag a defined buy box; Stag
+sources off-market property that matches it.
+
+The site serves **both sides of that business** on split paths: sellers submit a
+property at `/offer`, and buy-side clients submit acquisition criteria at
+`/investors`. Static pages plus one server route that pushes both intakes into
+Follow Up Boss as leads assigned to **Stephen Dougherty**.
+
+> **Positioning matters here.** Stag is *not* the end buyer — it sources for its
+> clients. Copy must never say the company buys with its own capital. See
+> `test/pages.test.ts` → "positioning — we source, we are not the end buyer",
+> which fails the build if that language comes back.
+
+> **The assignment disclosure is load-bearing.** Because the marketing copy uses
+> general language about the model, the disclosure is what actually tells a
+> seller that we act as a principal, may assign the agreement, and owe them no
+> fiduciary duty. It renders in three places — the footer of every page, inside
+> the seller form above the submit button, and in full at `/disclosures` — all
+> from constants in `src/data/site.ts`. `test/pages.test.ts` → "assignment
+> disclosure" enforces all three, and also fails the build on any copy that
+> would contradict it (`your best interest`, `on your side`, `we work for you`,
+> and similar). If a test there fails, fix the copy, not the test.
 
 Deployed to Cloudflare Workers with static assets. **Pushing to `main` deploys
 automatically** — see [Deploying](#deploying).
@@ -54,21 +74,68 @@ npx wrangler dev --port 8787      # http://localhost:8787
 | `/` | `src/pages/index.astro` |
 | `/how-it-works` | `src/pages/how-it-works.astro` |
 | `/markets` | `src/pages/markets.astro` |
-| `/offer` | `src/pages/offer.astro` — the lead form |
+| `/values` | `src/pages/values.astro` — faith, values, and where we stand |
+| `/investors` | `src/pages/investors.astro` — buy-side pitch + buy-box form |
+| `/offer` | `src/pages/offer.astro` — the seller intake form |
+| `/disclosures` | `src/pages/disclosures.astro` — the full assignment disclosure |
 | `/privacy` | `src/pages/privacy.astro` — includes `#sms-messaging` terms |
 | `POST /api/lead` | `src/pages/api/lead.ts` — the only non-prerendered route |
+
+## Brand artwork
+
+The lockup lives in `src/components/StagLockup.astro` as inline SVG with three
+variants:
+
+| Variant | Aspect | Used by |
+| --- | --- | --- |
+| `compact` | ~4:1 | the nav — STAG stacked over ACQUISITIONS, so it reads at 40px |
+| `horizontal` | ~5.4:1 | the footer, where there is width to spare |
+| `stacked` | ~1.1:1 | unused so far; available for square placements |
+
+Three things to know before touching it:
+
+- **It is generated, not hand-written.** The supplied files are 1px raster
+  traces — ~17,000 vertices and 140KB each. They are simplified with
+  Ramer-Douglas-Peucker at a 1.2-unit tolerance (~88% smaller) and cropped to
+  the ink, since the originals carry a wide clear-space margin that shrinks the
+  lettering to nothing at nav size. At the sizes the site renders, the result
+  differs from the original by under 2% of its edge pixels.
+- **Colour comes from CSS, not the file.** Every piece is `currentColor` and
+  carries its own class — `lockup-mark`, `lockup-text`, `lockup-rule` — so one
+  copy of the artwork reproduces every official variant. The two-tone rules are
+  the official ones: fern mark with white lettering on dark, sage mark with
+  char lettering on light.
+- **`width`/`height` attributes are required.** Without them the SVG has no
+  intrinsic size in the nav's flex row and the artwork spills out of the bar.
+
+`public/favicon.svg` is the weighted icon variant, which is drawn heavier so it
+survives at tab size.
 
 ## Editing content
 
 Almost everything a non-developer would change lives in **`src/data/site.ts`**:
-brand name, phone number, nav, market regions, service areas, and the
-condition/timeline dropdown options. Page copy lives in the frontmatter arrays at the top of each
-`.astro` page.
+brand name, phone number, nav, the homepage path chooser, market regions,
+service areas, the seller form's condition/timeline options, the buy-box form's
+asset types, price ranges, scope, volume, and financing options, the company
+values, the scripture anchor, and every version of the assignment disclosure
+(`DISCLOSURE_FOOTER`, `DISCLOSURE_SHORT`, `disclosureSections`). Page copy lives
+in the frontmatter arrays at the top of each `.astro` page.
+
+The scripture in `site.ts` is King James Version, which is public domain. Do not
+swap in a modern translation without checking its licensing terms — most are
+copyrighted and carry attribution requirements.
 
 ## Follow Up Boss integration
 
-`POST /api/lead` maps the form onto FUB's
-[`POST /v1/events`](https://docs.followupboss.com/reference/events-post) schema:
+`POST /api/lead` serves **both** forms. A hidden `leadType` field (`seller` or
+`investor`) selects which shape is validated, which FUB event type is sent, and
+which page a no-JS submission is redirected back to. Anything that is not
+explicitly `investor` is treated as a seller, so an older cached form still
+works.
+
+It maps the form onto FUB's
+[`POST /v1/events`](https://docs.followupboss.com/reference/events-post) schema —
+a seller submission looks like this:
 
 ```jsonc
 {
@@ -89,6 +156,11 @@ condition/timeline dropdown options. Page copy lives in the frontmatter arrays a
 }
 ```
 
+A buy-box submission differs in three ways: `type` is `General Inquiry`, the tag
+is `Investor` rather than `Seller`, and there is **no** `property` block or
+person `addresses` — a buy box has no single address, so the criteria go in the
+event `message` instead.
+
 Notes on the implementation:
 
 - **Auth** is HTTP Basic with the API key as the username and an empty
@@ -105,11 +177,17 @@ Notes on the implementation:
 - **Honeypot**: a hidden `company` field. If it is filled the endpoint returns
   success and silently drops the submission without calling FUB.
 - **No JS required.** The form posts natively and the endpoint replies `303` to
-  `/offer?status=…`; with JS it posts JSON and swaps in an inline success panel.
+  `/offer?status=…` or `/investors?status=…` depending on the intake; with JS it
+  posts JSON and swaps in an inline success panel.
+- **Multi-select fields.** `src/scripts/lead-form.ts` serializes the form by
+  hand rather than with `Object.fromEntries`, which would keep only the last
+  value of a repeated field and silently reduce the buy-box asset-type
+  checkboxes to a single selection.
 
-Server-side validation requires first name, phone, and property address.
-Condition and timeline are marked required in the markup but are *not* enforced
-server-side — a partially filled lead is still worth having.
+Server-side validation requires first name and phone on both intakes, plus the
+property address on the seller intake only. Everything else is marked required
+in the markup but is *not* enforced server-side — a partially filled lead is
+still worth having.
 
 ### Environment variables
 

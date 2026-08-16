@@ -8,7 +8,10 @@
   "compatibility_flags": ["nodejs_compat"],
   "assets": {
     "directory": "./dist",
-    "binding": "ASSETS"
+    "binding": "ASSETS",
+    // Serve dist/404.html for any path that does not resolve. Without this a
+    // mistyped postcard URL gets a bare Cloudflare error page.
+    "not_found_handling": "404-page"
   },
   "observability": {
     "enabled": true

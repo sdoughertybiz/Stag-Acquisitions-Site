@@ -1,6 +1,6 @@
 ---
 import { nav, site } from '../data/site';
-import Wordmark from './Wordmark.astro';
+import StagLockup from './StagLockup.astro';
 
 const { pathname } = Astro.url;
 const current = pathname.replace(/\.html$/, '').replace(/\/$/, '') || '/';
@@ -8,7 +8,7 @@ const current = pathname.replace(/\.html$/, '').replace(/\/$/, '') || '/';
 
 <nav class="nav" id="site-nav">
   <a class="nav-brand" href="/" aria-label={`${site.name}, home`}>
-    <Wordmark markSize={30} size="sm" />
+    <StagLockup variant="compact" height={40} decorative />
   </a>
   <button
     class="nav-toggle"

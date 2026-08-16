@@ -7,9 +7,13 @@
 /* -------- Sticky nav -------- */
 const nav = document.getElementById('site-nav');
 if (nav) {
-  const setScrolled = () => nav.classList.toggle('scrolled', window.scrollY > 24);
+  // The transparent nav is styled for a dark hero photograph. A page without a
+  // hero (404) would render cream links on a cream page — invisible — so it
+  // holds the solid state throughout.
+  const overHero = document.querySelector('.hero') !== null;
+  const setScrolled = () => nav.classList.toggle('scrolled', !overHero || window.scrollY > 24);
   setScrolled();
-  window.addEventListener('scroll', setScrolled, { passive: true });
+  if (overHero) window.addEventListener('scroll', setScrolled, { passive: true });
 }
 
 /* -------- Mobile menu -------- */

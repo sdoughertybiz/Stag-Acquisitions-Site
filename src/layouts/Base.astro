@@ -18,18 +18,23 @@ const { title, description = site.description, noindex = false } = Astro.props;
 const cleanPath = Astro.url.pathname.replace(/index\.html$/, '').replace(/\.html$/, '');
 const canonical = new URL(cleanPath || '/', site.url).href;
 
-const favicon =
-  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%234A6650'/%3E%3Ctext x='50' y='69' font-family='Georgia,serif' font-size='60' fill='%23FAF8F4' text-anchor='middle' font-weight='600'%3ES%3C/text%3E%3C/svg%3E";
-
+// ProfessionalService, deliberately — not RealEstateAgent. We source and
+// contract properties for buy-side clients rather than acting as a licensed
+// agent or broker, and the schema type should not imply otherwise.
 const orgSchema = {
   '@context': 'https://schema.org',
-  '@type': 'RealEstateAgent',
+  '@type': 'ProfessionalService',
   name: site.name,
   description: site.description,
   url: site.url,
   telephone: site.phone,
   areaServed: [...areaServed],
-  knowsAbout: ['Off-market home purchase', 'Cash home buying', 'As-is property acquisition'],
+  knowsAbout: [
+    'Off-market property sourcing',
+    'Real estate acquisitions',
+    'Developer and investor property sourcing',
+    'As-is property acquisition',
+  ],
 };
 ---
 
@@ -40,7 +45,7 @@ const orgSchema = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#FAF8F4" />
+    <meta name="theme-color" content="#F6F5F2" />
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
 
@@ -59,7 +64,7 @@ const orgSchema = {
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@400;500;600;700&display=swap"
     />
-    <link rel="icon" href={favicon} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
     <script type="application/ld+json" set:html={JSON.stringify(orgSchema)} is:inline />
 

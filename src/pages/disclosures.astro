@@ -1,0 +1,54 @@
+---
+import Base from '../layouts/Base.astro';
+import Backdrop from '../components/Backdrop.astro';
+import { disclosureSections, LEGAL_UPDATED, site } from '../data/site';
+
+const title = 'Disclosures — Stag Acquisitions';
+const description =
+  'How Stag Acquisitions works, in writing: we act as a principal in our own interest, we may assign our purchase agreement to a third party, and we do not represent you or owe you a fiduciary duty.';
+---
+
+<Base title={title} description={description}>
+  <header class="hero hero-short">
+    <Backdrop
+      src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=2400&q=80"
+      variant="hero"
+      priority
+    />
+    <div class="hero-content">
+      <span class="eyebrow">Disclosures</span>
+      <h1>How we work, <em>in writing.</em></h1>
+      <p class="lead">
+        Everything below is also in any agreement we would ask you to sign. It is here because you
+        should be able to read it before that, not after.
+      </p>
+    </div>
+  </header>
+
+  <section class="section" id="disclosures">
+    <div class="section-inner">
+      <div class="legal" data-reveal>
+        <p class="legal-meta">
+          Last updated <strong>{LEGAL_UPDATED}</strong>
+        </p>
+
+        {disclosureSections.map((section) => (
+          <Fragment>
+            <h2 id={section.id}>{section.heading}</h2>
+            {section.body.map((paragraph) => <p>{paragraph}</p>)}
+          </Fragment>
+        ))}
+
+        <h2 id="questions">Questions</h2>
+        <p>
+          If any of this is unclear, ask before you sign anything. Call or text
+          <a href={`tel:${site.phone}`}>{site.phoneDisplay}</a> and we will walk through it.
+        </p>
+        <p>
+          This page describes how {site.name} operates. It is not legal advice and it is not a
+          substitute for your own attorney reviewing the actual agreement in front of you.
+        </p>
+      </div>
+    </div>
+  </section>
+</Base>

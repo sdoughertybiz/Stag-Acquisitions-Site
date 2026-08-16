@@ -1,12 +1,15 @@
 /**
- * Enhances the offer form: posts JSON to /api/lead and swaps in an inline
- * success panel. Without JS the same form posts natively and the endpoint
- * redirects back to /offer?status=… — see handler.ts.
+ * Enhances both lead forms — the seller intake on /offer and the buy-box
+ * intake on /investors. Posts JSON to /api/lead and swaps in an inline success
+ * panel. Without JS the same form posts natively and the endpoint redirects
+ * back to the originating page with ?status=… — see handler.ts.
  */
 
-const form = document.querySelector<HTMLFormElement>('#offer-form');
+const form = document.querySelector<HTMLFormElement>('#offer-form, #buybox-form');
 const success = document.querySelector<HTMLElement>('#form-success');
 const statusBanner = document.querySelector<HTMLElement>('#form-status');
+
+const FALLBACK_PHONE = '(216) 488-8920';
 
 function showStatus(message: string): void {
   if (!statusBanner) return;
@@ -37,6 +40,22 @@ function applyErrors(scope: HTMLFormElement, errors: Record<string, string>): vo
   firstField?.focus();
 }
 
+/**
+ * Serialize the form to a flat object.
+ *
+ * Object.fromEntries would silently keep only the last value of a repeated
+ * field, which would reduce the buy-box asset-type checkboxes to a single
+ * selection. Repeated keys are joined instead so the CRM receives all of them.
+ */
+function serialize(scope: HTMLFormElement): Record<string, string> {
+  const payload: Record<string, string> = {};
+  for (const [key, value] of new FormData(scope).entries()) {
+    if (typeof value !== 'string') continue;
+    payload[key] = key in payload ? `${payload[key]}, ${value}` : value;
+  }
+  return payload;
+}
+
 /** Show the status banner from a no-JS round trip, then clean up the URL. */
 function handleRedirectStatus(): void {
   const params = new URLSearchParams(window.location.search);
@@ -47,9 +66,7 @@ function handleRedirectStatus(): void {
     form.hidden = true;
     success.hidden = false;
   } else if (state === 'error') {
-    showStatus(
-      "We couldn't submit that just now. Please call or text (216) 488-8920.",
-    );
+    showStatus(`We couldn't submit that just now. Please call or text ${FALLBACK_PHONE}.`);
   } else if (state === 'invalid') {
     showStatus('Please check the form and try again.');
   }
@@ -70,7 +87,7 @@ if (form && success) {
     if (button) button.disabled = true;
     if (buttonLabel) buttonLabel.textContent = 'Sending…';
 
-    const payload = Object.fromEntries(new FormData(form).entries());
+    const payload = serialize(form);
     payload.pageUrl = window.location.href;
 
     try {
@@ -95,9 +112,7 @@ if (form && success) {
       if (body.errors) applyErrors(form, body.errors);
       showStatus(body.message ?? 'Something went wrong. Please try again.');
     } catch {
-      showStatus(
-        "We couldn't reach our system. Please call or text (216) 488-8920.",
-      );
+      showStatus(`We couldn't reach our system. Please call or text ${FALLBACK_PHONE}.`);
     } finally {
       if (button) button.disabled = false;
       if (buttonLabel) buttonLabel.textContent = originalLabel;
