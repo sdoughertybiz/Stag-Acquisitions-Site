@@ -18,6 +18,9 @@ const { title, description = site.description, noindex = false } = Astro.props;
 const cleanPath = Astro.url.pathname.replace(/index\.html$/, '').replace(/\.html$/, '');
 const canonical = new URL(cleanPath || '/', site.url).href;
 
+// Absolute, because relative og:image URLs are ignored by every unfurler.
+const ogImage = new URL('/og-image.png', site.url).href;
+
 // ProfessionalService, deliberately — not RealEstateAgent. We source and
 // contract properties for buy-side clients rather than acting as a licensed
 // agent or broker, and the schema type should not imply otherwise.
@@ -56,7 +59,18 @@ const orgSchema = {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
+
+    {/* Link previews. Must be an absolute URL and a raster image — iMessage and
+        most unfurlers will not render an SVG, and will show nothing at all if
+        the URL is relative. Regenerate with `npm run og`. */}
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${site.name} — ${site.tagline}`} />
+
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogImage} />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

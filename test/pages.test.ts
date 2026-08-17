@@ -372,6 +372,45 @@ describe('investors.html — the buy-box form', () => {
  * copy names the city, and every submission is tagged so the campaign can be
  * measured.
  */
+/**
+ * The site is texted to sellers, so the link preview is the first impression
+ * for most of its traffic.
+ */
+describe('link preview', () => {
+  it.each(PAGES)('%s declares an absolute og:image', (page) => {
+    const html = read(page);
+    const src = html.match(/<meta property="og:image" content="([^"]+)"/)?.[1];
+    // A relative URL here is silently ignored by every unfurler.
+    expect(src, `no og:image on ${page}`).toBeDefined();
+    expect(src).toBe('https://stagacquisitions.com/og-image.png');
+    expect(html).toContain('<meta name="twitter:image"');
+  });
+
+  it('declares the dimensions unfurlers use to reserve space', () => {
+    const html = read('index.html');
+    expect(html).toContain('content="1200"');
+    expect(html).toContain('content="630"');
+    expect(html).toMatch(/og:image:alt" content="[^"]{10,}"/);
+  });
+
+  it('ships a raster image at the declared size', async () => {
+    const file = join(dist, 'og-image.png');
+    const buf = readFileSync(file);
+    // PNG magic number, then the IHDR width/height big-endian.
+    expect(buf.subarray(0, 4)).toEqual(Buffer.from([0x89, 0x50, 0x4e, 0x47]));
+    expect(buf.readUInt32BE(16)).toBe(1200);
+    expect(buf.readUInt32BE(20)).toBe(630);
+    // Under Twitter's 5MB cap, and small enough not to stall a preview.
+    expect(buf.length).toBeLessThan(300_000);
+  });
+
+  it('does not point the preview at an SVG', () => {
+    // iMessage and WhatsApp will not render one; the preview comes out blank.
+    const src = read('index.html').match(/<meta property="og:image" content="([^"]+)"/)![1]!;
+    expect(src).not.toMatch(/\.svg$/);
+  });
+});
+
 describe('404 page', () => {
   it('builds, and Cloudflare is told to serve it', () => {
     expect(readdirSync(dist)).toContain('404.html');

@@ -12,7 +12,8 @@
     "check": "astro check",
     "test": "vitest run",
     "test:watch": "vitest",
-    "smoke:fub": "node scripts/smoke-fub.mjs"
+    "smoke:fub": "node scripts/smoke-fub.mjs",
+    "og": "node scripts/og-image.mjs"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.10",
