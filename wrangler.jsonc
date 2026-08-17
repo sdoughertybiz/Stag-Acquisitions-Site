@@ -12,7 +12,13 @@
     "binding": "ASSETS",
     // Serve dist/404.html for any path that does not resolve. Without this a
     // mistyped postcard URL gets a bare Cloudflare error page.
-    "not_found_handling": "404-page"
+    "not_found_handling": "404-page",
+    // The asset worker answers navigation requests before the Worker script
+    // ever runs, and it only allows GET/HEAD. The no-JS form fallback posts
+    // /api/lead natively — a navigation POST — so without this it was answered
+    // with a bare 405 by the asset worker and the lead was lost. The enhanced
+    // fetch() path was unaffected, which is why this stayed invisible.
+    "run_worker_first": ["/api/lead"]
   },
   "observability": {
     "enabled": true
