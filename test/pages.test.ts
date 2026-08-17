@@ -376,6 +376,51 @@ describe('investors.html — the buy-box form', () => {
  * The site is texted to sellers, so the link preview is the first impression
  * for most of its traffic.
  */
+/**
+ * A CTA that promises the form should land on the form. Anything labelled
+ * "send us your buy box" that drops the visitor at the top of the page is
+ * friction we added ourselves.
+ */
+describe('buy-box CTAs land on the form', () => {
+  it('anchors every submit-intent link to #buy-box', () => {
+    const promises = [
+      ['index.html', 'Send us your buy box'],
+      ['index.html', 'Tell us what you are looking for'],
+      ['how-it-works.html', 'Send us your buy box'],
+    ] as const;
+
+    for (const [file, label] of promises) {
+      const html = read(file);
+      // Find the anchor wrapping this label and check where it points.
+      const re = new RegExp(`<a[^>]*href="([^"]+)"[^>]*>(?:(?!</a>)[\\s\\S])*?${label}`, 'i');
+      const href = html.match(re)?.[1];
+      expect(href, `"${label}" not found as a link in ${file}`).toBeDefined();
+      expect(href, `"${label}" in ${file} should go to the form`).toBe('/investors#buy-box');
+    }
+  });
+
+  it('leaves plain navigation pointing at the top of the page', () => {
+    // "I am buying" is identity, not intent to submit — those keep the pitch.
+    for (const [file, label] of [
+      ['index.html', 'I am a developer or investor'],
+      ['how-it-works.html', 'I am buying'],
+      ['values.html', 'I am buying'],
+    ] as const) {
+      const re = new RegExp(`<a[^>]*href="([^"]+)"[^>]*>\\s*${label}`, 'i');
+      const href = read(file).match(re)?.[1];
+      expect(href, `${label} in ${file}`).toBe('/investors');
+    }
+  });
+
+  it('has the anchor target, clear of the fixed nav', () => {
+    expect(read('investors.html')).toContain('id="buy-box"');
+    const dir = join(dist, '_astro');
+    const sheet = readFileSync(join(dir, readdirSync(dir).find((f) => f.endsWith('.css'))!), 'utf8');
+    // Without scroll-padding the heading lands underneath the fixed nav.
+    expect(sheet).toContain('scroll-padding-top:100px');
+  });
+});
+
 describe('link preview', () => {
   it.each(PAGES)('%s declares an absolute og:image', (page) => {
     const html = read(page);

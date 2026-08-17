@@ -82,7 +82,9 @@ export const paths = [
     title: 'Developer or investor',
     body: 'Give us your buy box once. We work our markets, filter the noise, and bring you only the properties that fit — so your team stays on the projects you already own.',
     cta: 'Send us your buy box',
-    href: '/investors',
+    // Straight to the form, not the top of the page — the label promises the
+    // form, so making them scroll for it is friction we put there ourselves.
+    href: '/investors#buy-box',
   },
 ] as const;
 
