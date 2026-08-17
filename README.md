@@ -31,8 +31,15 @@ automatically** — see [Deploying](#deploying).
 > [Working on this codebase](#working-on-this-codebase) first. Several things
 > here look like bugs and are not.
 
-> The directory, repo, and Worker are still named `dougherty-acq-site` from
-> before the rebrand. That is deliberate — only the brand changed.
+> The local directory is still `dougherty-acq-site` from before the rebrand.
+> The repo and the Worker are both `stag-acquisitions-site`; only the folder
+> on disk lags, and renaming it is safe if you want to.
+
+> **Cloudflare account.** `wrangler.jsonc` deliberately has no `account_id`.
+> It used to, and the hardcoded value pointed at a different account, so
+> deploys failed with a permissions error that looked like a build failure.
+> Wrangler now resolves the account from `wrangler login` locally, and from
+> the `CLOUDFLARE_ACCOUNT_ID` secret in CI.
 
 ---
 

@@ -21,7 +21,7 @@ jobs:
     timeout-minutes: 10
     environment:
       name: production
-      url: https://dougherty-acq-site.pdougher9.workers.dev
+      url: ${{ vars.DEPLOY_URL }}
 
     steps:
       - uses: actions/checkout@v5
@@ -46,7 +46,7 @@ jobs:
       # Fail early and legibly rather than letting wrangler error out with
       # something cryptic. The account id lives in wrangler.jsonc, so the
       # token is the only thing that has to be configured.
-      - name: Check the Cloudflare token is configured
+      - name: Check the Cloudflare credentials are configured
         run: |
           if [ -z "${{ secrets.CLOUDFLARE_API_TOKEN }}" ]; then
             echo "::error::CLOUDFLARE_API_TOKEN is not set. Create a token with the"
@@ -55,11 +55,26 @@ jobs:
             echo "::error::Settings > Secrets and variables > Actions in this repo."
             exit 1
           fi
+          if [ -z "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" ]; then
+            echo "::error::CLOUDFLARE_ACCOUNT_ID is not set. Find it in the Cloudflare"
+            echo "::error::dashboard under Workers & Pages, then add it as a repo secret."
+            echo "::error::It is no longer hardcoded in wrangler.jsonc, because a stale"
+            echo "::error::value there points deploys at the wrong account."
+            exit 1
+          fi
+          if [ -z "${{ vars.DEPLOY_URL }}" ]; then
+            echo "::error::DEPLOY_URL is not set. Add it under Settings > Secrets and"
+            echo "::error::variables > Actions > Variables, e.g."
+            echo "::error::https://stag-acquisitions-site.<your-subdomain>.workers.dev"
+            echo "::error::or https://stagacquisitions.com once the domain is attached."
+            exit 1
+          fi
 
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           # dist/ is already built above; do not let the action rebuild it.
           command: deploy
 
@@ -70,7 +85,7 @@ jobs:
                       /robots.txt /llms.txt; do
             for attempt in 1 2 3 4 5 6; do
               code=$(curl -s -o /dev/null -w '%{http_code}' \
-                "https://dougherty-acq-site.pdougher9.workers.dev${path}")
+                "${{ vars.DEPLOY_URL }}${path}")
               [ "$code" = "200" ] && break
               echo "  ${path} -> ${code}, retrying (${attempt}/6)"
               sleep 10
@@ -83,7 +98,7 @@ jobs:
           done
 
           # A mistyped postcard URL must land on our 404, not Cloudflare's.
-          body=$(curl -s "https://dougherty-acq-site.pdougher9.workers.dev/nashvile-typo-check")
+          body=$(curl -s "${{ vars.DEPLOY_URL }}/nashvile-typo-check")
           if ! echo "$body" | grep -q "That page is not here"; then
             echo "::error::unknown paths are not serving the custom 404 page"
             exit 1
