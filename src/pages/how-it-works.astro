@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Backdrop from '../components/Backdrop.astro';
+import { sellingOptions } from '../data/site';
 
 const title = 'How It Works — Stag Acquisitions';
 const description =
@@ -131,7 +132,47 @@ const stats = [
     </div>
   </section>
 
-  <section class="section bright">
+  <section class="section bright" id="ways">
+    <div class="section-inner">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Your options</span>
+        <h2>Four ways this can go.</h2>
+        <p class="lead">
+          Most companies in this business have one offer. Which of ours fits depends on what the
+          property needs and how much time you have — and we will tell you which one we think that
+          is, including when it is the one we make least on.
+        </p>
+      </div>
+
+      <div class="grid-4">
+        {sellingOptions.map((option, index) => (
+          <a
+            class="feature option-link"
+            href={`/ways-to-sell#${option.key}`}
+            data-reveal
+            data-reveal-delay={String(index + 1)}
+          >
+            <span class="feature-num">{option.label.replace('Option ', '')}</span>
+            <h3>{option.name}</h3>
+            <p>{option.summary}</p>
+            <span class="path-cta">
+              {option.speed}
+              <span class="arrow" aria-hidden="true">&rarr;</span>
+            </span>
+          </a>
+        ))}
+      </div>
+
+      <div class="center" style="margin-top: 5rem;" data-reveal>
+        <a class="cta" href="/ways-to-sell">
+          Compare all four
+          <span class="arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
     <div class="section-inner">
       <div class="section-head" data-reveal>
         <span class="eyebrow">The math</span>

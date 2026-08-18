@@ -1,0 +1,147 @@
+---
+/**
+ * The four ways a sale can go, ordered fastest-and-most-certain to
+ * highest-price. The trade-off between speed and money is the point of the
+ * page; a seller should be able to place themselves on it without being sold
+ * to, including when the honest answer is "list it with an agent".
+ */
+import Base from '../layouts/Base.astro';
+import Backdrop from '../components/Backdrop.astro';
+import { sellingOptions, site } from '../data/site';
+
+const title = 'Four Ways To Sell Your Property — Stag Acquisitions';
+const description =
+  'A direct purchase, a cash sale to one of our investors, our Sold Before Built pre-sale programme, or a traditional listing through a licensed brokerage. What each one pays, what each one costs, and how long each one takes.';
+---
+
+<Base title={title} description={description}>
+  <header class="hero hero-short">
+    <Backdrop
+      src="https://images.unsplash.com/photo-1449844908441-8829872d2607?auto=format&fit=crop&w=2400&q=80"
+      variant="hero"
+      priority
+    />
+    <div class="hero-content">
+      <span class="eyebrow">Ways to sell</span>
+      <h1>There is more than <em>one way</em> to do this.</h1>
+      <p class="lead">
+        Most companies in this business have exactly one offer. We have four, and which one suits
+        you depends on what your property needs and how much time you have.
+      </p>
+      <div class="hero-cta">
+        <a class="cta" href="/offer">
+          Get a number on your property
+          <span class="arrow" aria-hidden="true">&rarr;</span>
+        </a>
+        <a class="cta-ghost" href={`tel:${site.phone}`}>Or call {site.phoneDisplay}</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="section" id="tradeoff">
+    <div class="section-inner" style="max-width: 900px;">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">The trade-off</span>
+        <h2>Speed and price pull<br />against each other.</h2>
+        <p class="lead">
+          Every option below is a different point on the same line. The fastest one pays the least
+          because we carry all of the risk. The one that pays the most takes months because the
+          open market sets the price. Everything else sits in between.
+        </p>
+      </div>
+      <p class="muted" data-reveal>
+        We will tell you which one we think fits, including when that is the one we make the least
+        on. A seller who takes the wrong option is not a deal we want.
+      </p>
+    </div>
+  </section>
+
+  <!-- The comparison first: most people want the shape of it before the detail. -->
+  <section class="section bright" id="compare">
+    <div class="section-inner">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Side by side</span>
+        <h2>The four, compared.</h2>
+      </div>
+
+      <div class="table-scroll" data-reveal>
+        <table class="compare">
+          <thead>
+            <tr>
+              <th scope="col">Option</th>
+              <th scope="col">How long</th>
+              <th scope="col">What it pays</th>
+              <th scope="col">What it costs you</th>
+              <th scope="col">Best when</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sellingOptions.map((option) => (
+              <tr>
+                <th scope="row"><a href={`#${option.key}`}>{option.name}</a></th>
+                <td>{option.speed}</td>
+                <td>{option.price}</td>
+                <td>{option.cost}</td>
+                <td>{option.bestFor}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  {sellingOptions.map((option, index) => (
+    <section class={`section ${index % 2 === 1 ? '' : ''}`.trim()} id={option.key}>
+      <div class="section-inner" style="max-width: 900px;">
+        <div class="section-head" data-reveal>
+          <span class="eyebrow">{option.label}</span>
+          <h2>{option.name}</h2>
+          <p class="lead">{option.summary}</p>
+        </div>
+
+        <div class="prose" data-reveal>
+          {option.body.map((paragraph) => <p>{paragraph}</p>)}
+        </div>
+
+        {option.note && (
+          <div class="callout" style="margin-top: 2.6rem;" data-reveal>
+            <h3>What if it does not work out?</h3>
+            <p>{option.note}</p>
+          </div>
+        )}
+
+        <dl class="option-facts" data-reveal>
+          <div><dt>How long</dt><dd>{option.speed}</dd></div>
+          <div><dt>What it pays</dt><dd>{option.price}</dd></div>
+          <div><dt>What it costs you</dt><dd>{option.cost}</dd></div>
+          <div><dt>Best when</dt><dd>{option.bestFor}</dd></div>
+        </dl>
+      </div>
+    </section>
+  ))}
+
+  <section class="section ambient" id="which">
+    <Backdrop
+      src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2000&q=80"
+      variant="ambient"
+    />
+    <div class="section-inner center" style="max-width: 760px;">
+      <div data-reveal>
+        <span class="eyebrow">Not sure which</span>
+        <h2 style="margin: 1.5rem 0 2rem;">Send the address and we will tell you.</h2>
+        <p class="lead" style="max-width: 54ch; margin: 0 auto 3rem;">
+          You do not have to pick one now. Tell us about the property and we will say which of the
+          four we think fits it, and why — including when the answer is that you should list it.
+        </p>
+        <div class="hero-cta" style="justify-content: center;">
+          <a class="cta" href="/offer">
+            Get a number on your property
+            <span class="arrow" aria-hidden="true">&rarr;</span>
+          </a>
+          <a class="cta-ghost" href="/disclosures">Read the disclosures</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

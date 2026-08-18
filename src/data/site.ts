@@ -127,6 +127,97 @@ export const areaServed = [
 ] as const;
 
 /* ---------------------------------------------------------------------------
+ * Ways to sell
+ *
+ * Ordered deliberately: fastest and most certain first, highest price last.
+ * The trade-off between speed and money is the whole point of the page, and
+ * a seller should be able to find themselves on it without being sold to.
+ *
+ * Options 01-03 are principal transactions — Stag contracts and may assign,
+ * exactly as the disclosure says. Option 04 is not: a brokerage licensed in
+ * that market lists the property and represents the seller. Stag never acts
+ * as the seller\u2019s agent on any of the four, which is what keeps the sitewide
+ * disclosure accurate.
+ * ------------------------------------------------------------------------ */
+
+export interface SellingOption {
+  key: string;
+  label: string;
+  name: string;
+  summary: string;
+  body: string[];
+  speed: string;
+  price: string;
+  cost: string;
+  bestFor: string;
+  /** Rendered as a highlighted aside under the option. */
+  note?: string;
+}
+
+export const sellingOptions: SellingOption[] = [
+  {
+    key: 'direct',
+    label: 'Option 01',
+    name: 'We buy it ourselves',
+    summary: 'The fastest and most certain of the four. Also the lowest number.',
+    body: [
+      'We purchase for our own account. There is no third party to line up and nothing to market, so this moves as fast as title will allow.',
+      'We do not do this often. Most of the time one of our clients is a better fit and pays more, and we will tell you when that is the case. But it is on the table when speed matters more than anything else.',
+    ],
+    speed: 'As fast as title allows',
+    price: 'Lowest of the four',
+    cost: 'No commission, no repairs',
+    bestFor: 'Certainty and speed above all',
+  },
+  {
+    key: 'investor',
+    label: 'Option 02',
+    name: 'We bring it to our buyers',
+    summary: 'A cash close, at a better number than we would pay ourselves.',
+    body: [
+      'This is what we do most. We match the property against the buy boxes our developer and investor clients have already given us, agree terms with you, and the client closes.',
+      'You get the convenience of a cash deal \u2014 no listing, no showings, no repairs, no financing that can fall through \u2014 and a better number than we would offer on our own account, because there is a real pool of buyers competing for it.',
+    ],
+    speed: 'Days to a few weeks, on your date',
+    price: 'Above a direct purchase',
+    cost: 'No commission, no repairs',
+    bestFor: 'Cash and certainty without leaving money on the table',
+  },
+  {
+    key: 'sold-before-built',
+    label: 'Option 03',
+    name: 'Sold Before Built',
+    summary:
+      'We find the buyer for the new build before it is built. That is worth real money to a developer, and it goes to you.',
+    body: [
+      'The biggest risk on a new build is finishing it and not knowing who will buy it. We take that risk off the table. We produce digital renderings of the finished home, put it in front of the market, and secure an end buyer before construction starts.',
+      'A developer who already knows their exit can pay considerably more for the property. That difference is the reason this option exists.',
+      'It takes time. We usually ask for three months, which is still shorter than a typical listing runs. You pay nothing for any of it \u2014 the marketing, the renderings, the buyer search are ours, and we are paid by the developer.',
+    ],
+    speed: 'About three months',
+    price: 'Well above a straight cash offer',
+    cost: 'Nothing to you',
+    bestFor: 'Sellers who want meaningfully more and can give it a quarter',
+    note:
+      'If no end buyer turns up, we come back to you with what we have. Where the offers were close we will ask whether a renegotiation makes sense; if it does not, you walk away with no obligation and nothing owed. And if you find your own cash offer while we are marketing, take it \u2014 we only ask to be covered for what we spent on marketing. Tying people up so they cannot sell their own property is not how we work.',
+  },
+  {
+    key: 'traditional',
+    label: 'Option 04',
+    name: 'A traditional sale',
+    summary: 'Top of market, listed by a brokerage licensed where your property is.',
+    body: [
+      'If the house is in good shape \u2014 recently renovated, nothing deferred, nothing a buyer would flinch at \u2014 and you are not in a hurry, the open market will usually beat any off-market number. When that is true we will say so rather than talk you out of it.',
+      'We introduce you to a brokerage licensed in your market, and they list it properly. They represent you in that sale. We do not, and we are not a brokerage.',
+    ],
+    speed: 'Months, plus the sale itself',
+    price: 'Highest potential',
+    cost: 'Standard commission, repairs and concessions',
+    bestFor: 'Move-in-ready homes with no time pressure',
+  },
+];
+
+/* ---------------------------------------------------------------------------
  * Testimonials
  *
  * REAL ONES ONLY. Every entry must be something a specific person actually
@@ -424,6 +515,7 @@ export const disclosureSections = [
     heading: 'We are not a brokerage',
     body: [
       'Stag Acquisitions is not a licensed real estate brokerage. We do not provide brokerage services, we do not list properties for sale, and we do not market properties on behalf of owners.',
+      'Where an open-market sale is the better outcome for you, we will say so and introduce you to a brokerage licensed in your market. That brokerage represents you in the sale and owes you the duties of your agent. We do not become your agent by making the introduction, and nothing in this disclosure changes because you took it.',
     ],
   },
   {

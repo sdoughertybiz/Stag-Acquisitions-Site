@@ -35,6 +35,7 @@ const PAGES = [
   ...LANDING.map((m) => m.file),
   'index.html',
   'how-it-works.html',
+  'ways-to-sell.html',
   'values.html',
   'markets.html',
   'investors.html',
@@ -381,6 +382,75 @@ describe('investors.html — the buy-box form', () => {
  * "send us your buy box" that drops the visitor at the top of the page is
  * friction we added ourselves.
  */
+/**
+ * Four ways to sell, ordered fastest-and-most-certain to highest-price. The
+ * page only works if it is honest about the trade-off, including recommending
+ * the option Stag earns least on.
+ */
+describe('ways to sell', () => {
+  const html = () => read('ways-to-sell.html');
+
+  it('presents all four options, each with its own anchor', async () => {
+    const { sellingOptions } = await import('../src/data/site');
+    expect(sellingOptions).toHaveLength(4);
+    for (const option of sellingOptions) {
+      expect(html(), option.key).toContain(`id="${option.key}"`);
+      expect(text('ways-to-sell.html'), option.name).toContain(option.name);
+    }
+  });
+
+  it('orders them fastest to highest-price, not cheapest-for-us first', async () => {
+    const { sellingOptions } = await import('../src/data/site');
+    const order = sellingOptions.map((o) => o.key);
+    expect(order).toEqual(['direct', 'investor', 'sold-before-built', 'traditional']);
+    // The traditional listing pays most and earns Stag least; burying it would
+    // make the page a sales funnel rather than an explanation.
+    const copy = html();
+    expect(copy.indexOf('id="traditional"')).toBeGreaterThan(copy.indexOf('id="direct"'));
+  });
+
+  it('compares them in a table that scrolls rather than breaking the page', () => {
+    const copy = html();
+    expect(copy).toContain('table-scroll');
+    const body = copy.match(/<tbody>[\s\S]*?<\/tbody>/)![0];
+    expect((body.match(/<tr>/g) ?? []).length).toBe(4);
+    for (const heading of ['How long', 'What it pays', 'What it costs you', 'Best when']) {
+      expect(copy, heading).toContain(heading);
+    }
+  });
+
+  it('states the seller pays nothing on Sold Before Built', () => {
+    const copy = text('ways-to-sell.html');
+    expect(copy).toContain('You pay nothing');
+    expect(copy).toContain('we are paid by the developer');
+  });
+
+  it('states the downside and the exit on Sold Before Built', () => {
+    // A three-month commitment has to come with its worst case stated.
+    const copy = text('ways-to-sell.html');
+    expect(copy).toContain('three months');
+    expect(copy).toContain('walk away with no obligation');
+    expect(copy).toContain('covered for what we spent on marketing');
+  });
+
+  it('never claims Stag lists or represents the seller', async () => {
+    // The traditional option is a licensed partner brokerage, not us. Saying
+    // otherwise would be unlicensed brokerage outside Ohio, and would
+    // contradict the sitewide disclosure.
+    const copy = text('ways-to-sell.html');
+    expect(copy).toContain('brokerage licensed in your market');
+    expect(copy).toContain('They represent you in that sale. We do not');
+    for (const claim of ['we will list your', 'we list it', 'our brokerage', 'as your agent']) {
+      expect(copy.toLowerCase(), claim).not.toContain(claim);
+    }
+  });
+
+  it('is reachable from How It Works and the seller form', () => {
+    expect(read('how-it-works.html')).toContain('href="/ways-to-sell"');
+    expect(read('offer.html')).toContain('href="/ways-to-sell"');
+  });
+});
+
 describe('buy-box CTAs land on the form', () => {
   it('anchors every submit-intent link to #buy-box', () => {
     const promises = [

@@ -66,6 +66,27 @@ Dedicated intake pages exist for the neighbourhoods currently being worked.
 Properties outside these neighbourhoods are still considered; these are simply
 where the team is actively working.
 
+## Ways a seller can sell
+
+Four options, ordered fastest-and-most-certain to highest-price:
+
+1. Stag purchases directly, for its own account. Fastest and most certain,
+   and the lowest number. Offered but used infrequently.
+2. Stag brings the property to its developer and investor clients and assigns
+   the agreement. A cash close on the seller's date, above a direct purchase.
+   No commission and no repairs.
+3. "Sold Before Built" — Stag produces digital renderings of the finished new
+   build, markets it, and secures an end buyer before construction starts. A
+   developer who knows their exit carries far less risk and can pay more for
+   the property. Takes about three months; the seller pays nothing and Stag is
+   paid by the developer. If no end buyer is found the seller walks away with
+   no obligation, and a seller who finds their own cash offer during marketing
+   is free to take it, covering only Stag's marketing spend.
+4. A traditional on-market sale through a brokerage licensed in that market.
+   Highest potential price, longest timeline, and the seller pays the standard
+   commission plus repairs and concessions. That brokerage represents the
+   seller; Stag does not, and Stag is not a brokerage.
+
 ## Markets
 
 - Nashville, Tennessee — the south and west side, including Crieve Hall,
@@ -89,6 +110,7 @@ where the team is actively working.
 
 - [Home](https://stagacquisitions.com/): What specialized acquisitions means and who the company serves.
 - [How It Works](https://stagacquisitions.com/how-it-works): The four-step process, common questions, and the cost comparison against a retail listing.
+- [Ways To Sell](https://stagacquisitions.com/ways-to-sell): The four options open to a seller, compared on time, price and cost.
 - [Our Values](https://stagacquisitions.com/values): The faith and conduct behind the business, and where the company stands in a transaction.
 - [Markets](https://stagacquisitions.com/markets): The three home markets and the criteria that make a property a fit.
 - [For Investors](https://stagacquisitions.com/investors): The sourcing service for developers and investors, and the buy-box intake form.
