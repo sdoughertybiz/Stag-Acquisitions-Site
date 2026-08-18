@@ -178,7 +178,7 @@ export const sellingOptions: SellingOption[] = [
       'This is what we do most. We match the property against the buy boxes our developer and investor clients have already given us, agree terms with you, and the client closes.',
       'You get the convenience of a cash deal \u2014 no listing, no showings, no repairs, no financing that can fall through \u2014 and a better number than we would offer on our own account, because there is a real pool of buyers competing for it.',
     ],
-    speed: 'Days to a few weeks, on your date',
+    speed: 'Usually under 30 days',
     price: 'Above a direct purchase',
     cost: 'No commission, no repairs',
     bestFor: 'Cash and certainty without leaving money on the table',

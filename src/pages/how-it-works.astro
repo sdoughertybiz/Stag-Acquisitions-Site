@@ -33,15 +33,15 @@ const steps = [
 const questions = [
   {
     q: 'Who actually buys the property?',
-    a: 'One of the developers or investors we work with. We are the acquisitions arm — we find the property, work out terms with the owner, and hand it to the buyer whose criteria it matched. We are not a brokerage and we do not list properties.',
+    a: 'One of the developers or investors we work with. We are the acquisitions arm — we find the property, agree terms with the owner, and hand it to the buyer whose criteria it matched. We are not a brokerage and we do not list properties. That is how most of our deals go, though it is not the only way we can do it.',
   },
   {
     q: 'What does it cost a seller?',
-    a: 'Nothing out of pocket, and no agent commission. There is no listing, no staging, no repairs, and no showings. You deal with us directly and you know the number before anything is signed.',
+    a: 'Nothing out of pocket, and no agent commission. There is no listing, no staging, no repairs, and no showings. You deal with us directly and you know the number before anything is signed. The exception is a traditional listing, which carries the usual commission — and we will tell you if that is the better route for your property.',
   },
   {
     q: 'Why not just list it?',
-    a: 'A listing costs months and six to ten percent in commission, closing costs, and repair credits — plus a buyer whose financing might not hold. Off-market skips all of it when speed and certainty matter more than squeezing the last dollar.',
+    a: 'A listing costs months and six to ten percent in commission, closing costs, and repair credits — plus a buyer whose financing might not hold. Off-market skips all of it when speed and certainty matter more than squeezing the last dollar. When it does not — a house in good shape and no rush — we will say so rather than talk you out of it.',
   },
 ];
 
@@ -58,9 +58,9 @@ const faqSchema = {
 };
 
 const stats = [
-  { num: '0%', label: 'Seller commission' },
+  { num: '0%', label: 'Agent commission' },
   { num: '0', label: 'Showings required' },
-  { num: '7&ndash;90', label: 'Days to close — seller picks' },
+  { num: '7&ndash;90', label: 'Days to close — you pick' },
   { num: 'As&nbsp;is', label: 'Condition accepted' },
 ];
 ---
@@ -129,6 +129,13 @@ const stats = [
           </div>
         ))}
       </div>
+
+      <div class="center" style="margin-top: 4rem;" data-reveal>
+        <a class="cta-ghost" href="/ways-to-sell">
+          See all four ways to sell
+          <span class="arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
     </div>
   </section>
 
@@ -191,6 +198,11 @@ const stats = [
           </div>
         ))}
       </div>
+
+      <p class="muted" style="margin-top: 2.4rem; font-size: 0.94rem;" data-reveal>
+        That is the route most deals take. Three others exist if the property suits them better —
+        <a href="/ways-to-sell" style="color: var(--sage); font-weight: 600;">compare all four</a>.
+      </p>
     </div>
   </section>
 

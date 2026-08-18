@@ -452,6 +452,22 @@ describe('ways to sell', () => {
     expect(copy).toContain('your commission is not raised to cover it');
   });
 
+  it('is referenced from the How It Works FAQ without taking it over', () => {
+    const copy = text('how-it-works.html');
+    // The page is about the route most deals take...
+    expect(copy).toContain('One of the developers or investors we work with');
+    // ...but must not present it as the only one.
+    expect(copy).toContain('not the only way we can do it');
+    expect(copy).toContain('See all four ways to sell');
+  });
+
+  it('does not let the no-commission claim stand unqualified there', () => {
+    // A traditional listing does carry commission; saying otherwise on a page
+    // that now links to that option would contradict /ways-to-sell.
+    const copy = text('how-it-works.html');
+    expect(copy).toContain('The exception is a traditional listing, which carries the usual commission');
+  });
+
   it('is reachable from How It Works and the seller form', () => {
     expect(read('how-it-works.html')).toContain('href="/ways-to-sell"');
     expect(read('offer.html')).toContain('href="/ways-to-sell"');
