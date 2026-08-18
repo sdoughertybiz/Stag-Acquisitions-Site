@@ -36,7 +36,7 @@ ul, ol { list-style: none; }
 /* -------- Tokens -------- */
 :root {
   /* Official Stag Acquisitions palette, built from the hero button green.
-     These ten are the whole vocabulary — do not introduce colours outside it.
+     These ten are the whole vocabulary — do not introduce colors outside it.
      Anything below that is not one of these is an alpha blend of one of them. */
   --mist:        #F1F3EF;   /* palest green — alternating band            */
   --lichen:      #D3DCD2;   /* pale green — footer, hover fills           */
@@ -52,7 +52,7 @@ ul, ol { list-style: none; }
   /* Semantic aliases mapping the older role names onto the palette.
      NOTE: `--mist` above is the pale palette COLOUR. The ink tokens are
      `--ink-strong` and `--ink-body` — never reuse a palette name for a text
-     colour, which is exactly how every heading once rendered pale-on-pale. */
+     color, which is exactly how every heading once rendered pale-on-pale. */
   --ink-strong:  var(--moss);    /* headings, .lead, emphasis              */
   --ink-body:    var(--pine);    /* body copy                              */
 
@@ -82,7 +82,7 @@ ul, ol { list-style: none; }
   --border-med:    rgba(34, 37, 31, 0.20);
   --border-strong: rgba(34, 37, 31, 0.34);
 
-  /* The palette has no error colour; this is the one sanctioned addition. */
+  /* The palette has no error color; this is the one sanctioned addition. */
   --danger:      #B4472F;
 
   /* Legibility first. Playfair Display carries the upscale tone in headlines
@@ -423,7 +423,7 @@ body:not(:has(.hero)) .nav-toggle::after { background: var(--ink-strong); }
   /* Centred by auto margins rather than left:50% + translateX. As an
      absolutely-positioned child of a flex container the percentage was
      resolving against a box that is not the one it appears in, which pushed it
-     off-centre on narrow screens. */
+     off-center on narrow screens. */
   left: 0;
   right: 0;
   margin-inline: auto;
@@ -736,7 +736,7 @@ body:not(:has(.hero)) .nav-toggle::after { background: var(--ink-strong); }
 @media (max-width: 820px) { .option-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 520px) { .option-facts { grid-template-columns: 1fr; } }
 
-/* -------- Neighbourhood chips (market landing pages) -------- */
+/* -------- Neighborhood chips (market landing pages) -------- */
 .chip-list {
   display: flex;
   flex-wrap: wrap;

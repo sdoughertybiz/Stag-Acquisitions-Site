@@ -20,7 +20,7 @@ const LANDING = [
 ];
 
 /**
- * The neighbourhoods the team actually buys in, as supplied. The site must not
+ * The neighborhoods the team actually buys in, as supplied. The site must not
  * advertise areas outside these — a seller in an area we do not work is a
  * wasted call for them and for us.
  */
@@ -445,6 +445,13 @@ describe('ways to sell', () => {
     }
   });
 
+  it('says how we are paid on the referral, and that it costs the seller nothing', () => {
+    const copy = text('ways-to-sell.html');
+    expect(copy).toContain('pays us a referral fee');
+    // The point a seller cares about: it comes out of the existing commission.
+    expect(copy).toContain('your commission is not raised to cover it');
+  });
+
   it('is reachable from How It Works and the seller form', () => {
     expect(read('how-it-works.html')).toContain('href="/ways-to-sell"');
     expect(read('offer.html')).toContain('href="/ways-to-sell"');
@@ -687,14 +694,14 @@ describe('market landing pages', () => {
     expect(text(file)).toContain('we may assign that agreement');
   });
 
-  it.each(LANDING)('$file names real neighbourhoods and offers the phone line', ({ file }) => {
+  it.each(LANDING)('$file names real neighborhoods and offers the phone line', ({ file }) => {
     const html = read(file);
     const chips = [...html.matchAll(/<li>([^<]+)<\/li>/g)].map((m) => m[1]);
-    expect(chips.length, 'expected a neighbourhood list').toBeGreaterThanOrEqual(8);
+    expect(chips.length, 'expected a neighborhood list').toBeGreaterThanOrEqual(8);
     expect(html).toContain('href="tel:+12164888920"');
   });
 
-  it.each(Object.entries(FOOTPRINT))('%s lists exactly the supplied neighbourhoods', (file, expected) => {
+  it.each(Object.entries(FOOTPRINT))('%s lists exactly the supplied neighborhoods', (file, expected) => {
     const chips = [...read(file).matchAll(/<li>([^<]+)<\/li>/g)].map((m) => m[1]!.trim());
     expect(chips).toEqual(expected);
   });
@@ -787,6 +794,21 @@ describe('assignment disclosure', () => {
     expect(copy).toContain('we owe you no fiduciary duty');
     expect(copy).toContain('may be paid a fee or earn a profit');
     expect(copy).toContain('may not be Stag Acquisitions');
+  });
+
+  it('discloses the license and what it does not mean', () => {
+    const copy = text('disclosures.html');
+    // A licensee dealing as a principal should say so.
+    expect(copy).toContain('holds an active real estate license in Ohio');
+    expect(copy).toContain('Holding that license does not make us your agent');
+    // And the entity is still not a brokerage — both are true at once.
+    expect(copy).toContain('is not a brokerage');
+  });
+
+  it('discloses the referral fee and who pays it', () => {
+    const copy = text('disclosures.html');
+    expect(copy).toContain('paid a referral fee by that brokerage');
+    expect(copy).toContain('Your commission is not increased to cover it');
   });
 
   it('says nothing is binding until signed', () => {
@@ -1099,7 +1121,7 @@ describe('brand palette', () => {
     return readFileSync(join(dir, file!), 'utf8');
   };
 
-  // The ten official colours, built from the hero button green (#5C7560).
+  // The ten official colors, built from the hero button green (#5C7560).
   const OFFICIAL = [
     ['mist', '#F1F3EF'],
     ['lichen', '#D3DCD2'],
@@ -1113,34 +1135,34 @@ describe('brand palette', () => {
     ['char', '#14140F'],
   ] as const;
 
-  it('defines every colour in the official palette', () => {
+  it('defines every color in the official palette', () => {
     const sheet = css().toUpperCase();
     for (const [token, value] of OFFICIAL) {
       expect(sheet, `--${token}: ${value}`).toContain(value.toUpperCase());
     }
   });
 
-  it('uses no colour outside the official palette', () => {
+  it('uses no color outside the official palette', () => {
     // Every hex in the sheet must be one of the ten, or the single sanctioned
-    // addition (--danger; the palette has no error colour).
+    // addition (--danger; the palette has no error color).
     const allowed = new Set([...OFFICIAL.map(([, v]) => v.toUpperCase()), '#B4472F']);
     const found = [...css().matchAll(/#[0-9A-Fa-f]{3,8}\b/g)]
       .map((m) => m[0].toUpperCase())
       // Expand #ABC shorthand, and drop the alpha byte the minifier folds into
-      // 8-digit hex — an alpha blend of a palette colour is still on-palette.
+      // 8-digit hex — an alpha blend of a palette color is still on-palette.
       .map((h) => (h.length === 4 ? `#${h[1]}${h[1]}${h[2]}${h[2]}${h[3]}${h[3]}` : h))
       .map((h) => (h.length === 9 ? h.slice(0, 7) : h));
     const stray = [...new Set(found)].filter((h) => !allowed.has(h));
-    expect(stray, `off-palette colours: ${stray.join(', ')}`).toEqual([]);
+    expect(stray, `off-palette colors: ${stray.join(', ')}`).toEqual([]);
   });
 
   /**
-   * The palette has a colour named MIST (#F1F3EF, a pale background). The
+   * The palette has a color named MIST (#F1F3EF, a pale background). The
    * design system separately used `--mist` as the heading/body ink. Pointing
    * one at the other rendered every heading and paragraph pale-on-pale across
    * the whole site. Ink lives in --ink-strong / --ink-body; keep it that way.
    */
-  it('keeps text ink separate from the pale palette colours', () => {
+  it('keeps text ink separate from the pale palette colors', () => {
     const sheet = css().replace(/\s+/g, '');
     expect(sheet).toContain('--ink-strong:var(--moss)');
     expect(sheet).toContain('--ink-body:var(--pine)');
@@ -1152,12 +1174,12 @@ describe('brand palette', () => {
       .filter(([, sel, decls]) => {
         if (sel.includes(':root')) return false;
         const m = decls.match(/(?:^|;)\s*color:\s*var\((--[\w-]+)\)/);
-        // Light-on-dark contexts legitimately use a pale colour for text.
+        // Light-on-dark contexts legitimately use a pale color for text.
         const onDark = /\.hero|\.ambient|\.nav-brand|\.nav-links|\.cta\b|\.skip-link|lockup/.test(sel);
         return m && pale.includes(m[1]!) && !onDark;
       })
       .map(([, sel]) => sel.trim());
-    expect(offenders, `pale text colour on: ${offenders.join(' | ')}`).toEqual([]);
+    expect(offenders, `pale text color on: ${offenders.join(' | ')}`).toEqual([]);
   });
 
   it('scrims the nav so it stays legible over a bright photograph', () => {
@@ -1190,7 +1212,7 @@ describe('brand lockup', () => {
     expect(html).toContain('class="stag-lockup');
     const lockup = html.match(/<svg class="stag-lockup[\s\S]*?<\/svg>/)![0];
     expect(lockup).toContain('fill-rule="evenodd"');
-    // Mark and lettering are separate pieces so each can be coloured
+    // Mark and lettering are separate pieces so each can be colored
     // independently — that is what the official variants do. Only the
     // horizontal lockup carries the divider rule.
     expect(lockup).toContain('class="lockup-mark"');
@@ -1207,10 +1229,10 @@ describe('brand lockup', () => {
     expect(lockup).toMatch(/height="[\d.]+"/);
   });
 
-  it('colours the artwork through CSS rather than baking fills in', () => {
+  it('colors the artwork through CSS rather than baking fills in', () => {
     const lockup = read('index.html').match(/<svg class="stag-lockup[\s\S]*?<\/svg>/)![0];
     expect(lockup).toContain('fill="currentColor"');
-    // A hard-coded brand hex here would defeat the per-context colouring.
+    // A hard-coded brand hex here would defeat the per-context coloring.
     expect(lockup).not.toMatch(/fill="#[0-9A-Fa-f]{6}"/);
   });
 

@@ -107,7 +107,7 @@ Three things to know before touching it:
   the ink, since the originals carry a wide clear-space margin that shrinks the
   lettering to nothing at nav size. At the sizes the site renders, the result
   differs from the original by under 2% of its edge pixels.
-- **Colour comes from CSS, not the file.** Every piece is `currentColor` and
+- **Color comes from CSS, not the file.** Every piece is `currentColor` and
   carries its own class — `lockup-mark`, `lockup-text`, `lockup-rule` — so one
   copy of the artwork reproduces every official variant. The two-tone rules are
   the official ones: fern mark with white lettering on dark, sage mark with

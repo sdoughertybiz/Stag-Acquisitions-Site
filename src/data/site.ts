@@ -103,7 +103,7 @@ export const markets = [
   {
     label: 'Market 03',
     name: 'Charlotte, North Carolina',
-    body: 'Myers Park, Eastover, Lansdowne, Foxcroft, SouthPark, Dilworth, and Plaza Midwood — the established neighbourhoods on the south side of the city.',
+    body: 'Myers Park, Eastover, Lansdowne, Foxcroft, SouthPark, Dilworth, and Plaza Midwood — the established neighborhoods on the south side of the city.',
   },
   {
     label: 'Everywhere else',
@@ -209,6 +209,7 @@ export const sellingOptions: SellingOption[] = [
     body: [
       'If the house is in good shape \u2014 recently renovated, nothing deferred, nothing a buyer would flinch at \u2014 and you are not in a hurry, the open market will usually beat any off-market number. When that is true we will say so rather than talk you out of it.',
       'We introduce you to a brokerage licensed in your market, and they list it properly. They represent you in that sale. We do not, and we are not a brokerage.',
+      'That brokerage pays us a referral fee. It comes out of the commission they already charge \u2014 your commission is not raised to cover it, and the referral costs you nothing on top of a normal sale.',
     ],
     speed: 'Months, plus the sale itself',
     price: 'Highest potential',
@@ -239,7 +240,7 @@ export interface Testimonial {
   quote: string;
   /** First name and last initial — enough to be a real person, not a full name. */
   name: string;
-  /** Neighbourhood or city, when the review states one. Often it does not. */
+  /** Neighborhood or city, when the review states one. Often it does not. */
   location?: string;
   /** Optional one-liner on the situation: "Inherited property". */
   context?: string;
@@ -287,7 +288,7 @@ export interface LandingMarket {
    * Hero photograph. Chosen to match the housing stock each market actually
    * buys — mid-century brick in Nashville, large-lot estates in Brentwood,
    * historic brick in Charlotte, desert modern in Scottsdale — NOT to depict
-   * the neighbourhood itself. Stock libraries have no imagery of Crieve Hall
+   * the neighborhood itself. Stock libraries have no imagery of Crieve Hall
    * or Foxcroft; city-level results are downtown and tourism shots, which are
    * the wrong subject for a page about selling a house. Replace with real
    * local photography when you have it.
@@ -313,7 +314,7 @@ export const landingMarkets: LandingMarket[] = [
       'https://images.unsplash.com/photo-1783628092605-6fc6fb2a3b8c?auto=format&fit=crop&w=2400&q=80',
     lead: 'Crieve Hall, Green Hills, Forest Hills and Belle Meade — the south and west side. Tell us the address and we will tell you the same day whether it fits what our buyers are looking for.',
     intro: [
-      'These are neighbourhoods where the lot usually carries the value. Much of the stock through Crieve Hall, West Meade and Forest Hills is mid-century \u2014 solid brick ranch homes on large, established lots, sitting next to new construction that makes them look older than they are.',
+      'These are neighborhoods where the lot usually carries the value. Much of the stock through Crieve Hall, West Meade and Forest Hills is mid-century \u2014 solid brick ranch homes on large, established lots, sitting next to new construction that makes them look older than they are.',
       'Our clients are not looking for the house that has already been renovated. They want the one that has not been touched since it was built, because the work is the point. The dated kitchen you would have to replace before listing is not something they need you to touch.',
     ],
     neighborhoods: [
@@ -357,7 +358,7 @@ export const landingMarkets: LandingMarket[] = [
       'https://images.unsplash.com/photo-1750569449345-45b897ea2190?auto=format&fit=crop&w=2400&q=80',
     lead: 'Myers Park, Eastover, Foxcroft and SouthPark — the established side of Charlotte, where the parcel usually matters more than the floor plan.',
     intro: [
-      'Charlotte\u2019s established neighbourhoods are a large-lot market. Myers Park and Eastover are mature and tightly held; Foxcroft and Lansdowne carry a lot of mid-century ranch stock on parcels that support considerably more than what sits on them today.',
+      'Charlotte\u2019s established neighborhoods are a large-lot market. Myers Park and Eastover are mature and tightly held; Foxcroft and Lansdowne carry a lot of mid-century ranch stock on parcels that support considerably more than what sits on them today.',
       'That is exactly why our clients want them as they stand. A house nobody has updated since it was built is not a discount to argue over \u2014 for a builder it is the entire opportunity.',
     ],
     neighborhoods: [
@@ -516,6 +517,16 @@ export const disclosureSections = [
     body: [
       'Stag Acquisitions is not a licensed real estate brokerage. We do not provide brokerage services, we do not list properties for sale, and we do not market properties on behalf of owners.',
       'Where an open-market sale is the better outcome for you, we will say so and introduce you to a brokerage licensed in your market. That brokerage represents you in the sale and owes you the duties of your agent. We do not become your agent by making the introduction, and nothing in this disclosure changes because you took it.',
+      'We are paid a referral fee by that brokerage. It is paid out of the commission the brokerage already charges. Your commission is not increased to cover it, so the referral costs you nothing beyond the cost of a normal listed sale.',
+    ],
+  },
+  {
+    id: 'licensed-status',
+    heading: 'Our license, and what it does not mean',
+    body: [
+      'A principal of Stag Acquisitions holds an active real estate license in Ohio. We disclose that because in a transaction with a licensee you are entitled to know.',
+      'Holding that license does not make us your agent. When we buy a property we do so as a principal, for our own account and in our own interest, and outside Ohio we act only in that capacity \u2014 never as a licensee working on your behalf. The company itself is not a brokerage and does not provide brokerage services anywhere.',
+      'The license is what allows us to receive a referral fee when we introduce you to a brokerage, as described above.',
     ],
   },
   {
