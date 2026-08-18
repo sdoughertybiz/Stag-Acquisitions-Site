@@ -452,20 +452,21 @@ describe('ways to sell', () => {
     expect(copy).toContain('your commission is not raised to cover it');
   });
 
-  it('is referenced from the How It Works FAQ without taking it over', () => {
+  it('scopes the How It Works FAQ to the common route and links onward', () => {
     const copy = text('how-it-works.html');
-    // The page is about the route most deals take...
-    expect(copy).toContain('One of the developers or investors we work with');
-    // ...but must not present it as the only one.
-    expect(copy).toContain('not the only way we can do it');
+    // The short answers are the point; the qualification sits above them once,
+    // not as a caveat bolted onto each one.
+    expect(copy).toContain('These describe the route most of our deals take');
+    expect(copy).toContain('there are four ways this can go');
     expect(copy).toContain('See all four ways to sell');
   });
 
-  it('does not let the no-commission claim stand unqualified there', () => {
-    // A traditional listing does carry commission; saying otherwise on a page
-    // that now links to that option would contradict /ways-to-sell.
+  it('keeps the FAQ answers short', () => {
     const copy = text('how-it-works.html');
-    expect(copy).toContain('The exception is a traditional listing, which carries the usual commission');
+    // Guarding the thing that made them work: they say one thing each.
+    expect(copy).toContain('We are not a brokerage and we do not list properties.');
+    expect(copy).toContain('you know the number before anything is signed.');
+    expect(copy).toContain('speed and certainty matter more than squeezing the last dollar.');
   });
 
   it('is reachable from How It Works and the seller form', () => {
